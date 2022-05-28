@@ -1,0 +1,415 @@
+@extends('layouts.app')
+
+@php
+
+@endphp
+@section('title', 'Transaksi')
+@section('custom-import-css')
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+@endsection
+@section('custom-css')
+.disabled-date {
+  /* Make the disabled links grayish*/
+  background-color: gray;
+  /* And disable the pointer events */
+  pointer-events: none;
+}
+@endsection
+@section('content')
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+	<div class="content-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12">
+					<ol class="breadcrumb float-sm-left">
+						<li class="breadcrumb-item"><a href="{{ url('/') }}">Beranda</a></li>
+						<li class="breadcrumb-item"><a href="{{ url('/invoice') }}">Invoice</a></li>
+						<li class="breadcrumb-item active">Tambah</li>
+					</ol>
+					</div><!-- /.col -->
+					</div><!-- /.row -->
+					</div><!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+				<!-- Main content -->
+				<div class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12">
+								@if(session()->has('success'))
+								<div class="alert alert-success alert-dismissible">
+									<button type="button" class="close" data-dismiss="alert"
+									aria-hidden="true">&times;</button>
+									{{ session()->get('success') }}
+								</div>
+								@endif
+								<div class="card card-primary card-outline">
+									<div class="card-header">
+										<h4 class="m-0">Invoice</h4>
+									</div>
+									<div class="card-body">
+										<!-- form start -->
+										<form action="{{ route('invoices.store') }}" method="POST">
+											@csrf
+											<div class="row">
+												<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+													<div class="form-group">
+														<label>Tanggal Invoice</label>
+														<div class="input-group date" id="tanggalInvoice"
+															data-target-input="nearest">
+															<div class="input-group-prepend"
+																data-target="#tanggalInvoice"
+																data-toggle="datetimepicker">
+																<div class="input-group-text"><i
+																class="fa fa-calendar"></i></div>
+															</div>
+															<input type="text" id="tanggalInvoiceInput" name="tanggal_invoice"
+															class="form-control datetimepicker-input"
+															data-target="#tanggalInvoice"
+															data-toggle="datetimepicker"
+															autocomplete="off"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label for="nomorInvoice">Nomor Invoice</label>
+														<input type="text" id="nomorInvoice" name="nomor_invoice" class="form-control @error('nomor_invoice') is-invalid @enderror" placeholder="John Doe" />
+														@error('nomor_invoice')
+														<span class="invalid-feedback" role="alert">
+															{{ $message }}
+														</span>
+														@enderror
+													</div>
+													<div class="form-group">
+														<label>Klien</label>
+														<select name="klien" class="form-control select2 select2-client select2-primary @error('klien') is-invalid  @enderror" data-dropdown-css-class="select2-primary" style="width: 100%;">
+															<option selected="selected" disabled>Pilih Klien</option>
+															@foreach ($clients as $client)
+															<option value="{{ $client->id }}">{{ $client->nama }} &mdash; {{ $client->alamat }}</option>
+															@endforeach
+														</select>
+														@error('klien')
+														<span class="invalid-feedback" role="alert">
+															{{ $message }}
+														</span>
+														@enderror
+													</div>
+													<div class="form-group">
+														<label>Kategori Layanan</label>
+														<select name="service_category_id" id="serviceCategory" class="form-control select2 select2-service-category select2-primary @error('service_category_id') is-invalid  @enderror" data-dropdown-css-class="select2-primary" style="width: 100%;">
+															<option selected="selected" disabled>Pilih Kategori</option>
+															@foreach ($serviceCategories as $serviceCategory)
+															<option value="{{ $serviceCategory->id }}">{{ $serviceCategory->nama }}</option>
+															@endforeach
+														</select>
+														@error('service_category_id')
+														<span class="invalid-feedback" role="alert">
+															{{ $message }}
+														</span>
+														@enderror
+													</div>
+													<div class="form-group">
+														<label>Layanan</label>
+														<select name="service_id" id="service" class="form-control select2 select2-service select2-primary @error('service_id') is-invalid  @enderror" data-dropdown-css-class="select2-primary" style="width: 100%;">
+															<option selected="selected" disabled>Pilih Layanan</option>
+														</select>
+														@error('service_id')
+														<span class="invalid-feedback" role="alert">
+															{{ $message }}
+														</span>
+														@enderror
+													</div>
+
+												</div>
+												<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+													<div class="form-group">
+														<label>Masa Aktif Layanan</label>
+														<div class="input-group mb-3">
+															
+															<input type="number" id="totalPeriod" class="form-control minOne" value="1" min="1">
+															<div class="input-group-append">
+																<label class="input-group-text" id="totalPeriodText" for="inputGroupPeriod">Tahun</label>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<label>Mulai Aktif Layanan</label>
+														<div class="input-group date" id="startDate"
+															data-target-input="nearest">
+															<div class="input-group-prepend"
+																data-target="#startDate"
+																data-toggle="datetimepicker">
+																<div class="input-group-text"><i
+																class="fa fa-calendar"></i></div>
+															</div>
+															<input type="text" id="startDateInput" name="start_date"
+															class="form-control datetimepicker-input disabled-date"
+															data-target="#startDate"
+															data-toggle="datetimepicker"
+															autocomplete="off" readonly/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label>Tanggal Berakhir</label>
+														<div class="input-group date" id="endDate"
+															data-target-input="nearest">
+															<div class="input-group-prepend"
+																data-target="#endDate"
+																data-toggle="datetimepicker">
+																<div class="input-group-text"><i
+																class="fa fa-calendar"></i></div>
+															</div>
+															<input type="text" id="endDateInput"  name="end_date"
+															class="form-control datetimepicker-input disabled-date"
+															data-target="#endDate"
+															data-toggle="datetimepicker"
+															autocomplete="off" readonly/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label>Tanggal Jatuh Tempo</label>
+														<div class="input-group date" id="dueDate"
+															data-target-input="nearest">
+															<div class="input-group-prepend"
+																data-target="#dueDate"
+																data-toggle="datetimepicker">
+																<div class="input-group-text"><i
+																class="fa fa-calendar"></i></div>
+															</div>
+															<input type="text" id="dueDateInput"  name="due_date"
+															class="form-control datetimepicker-input"
+															data-target="#dueDate"
+															data-toggle="datetimepicker"
+															autocomplete="off"/>
+														</div>
+													</div>
+													<div class="form-group">
+														<label for="totalPrice">Total Harga</label>
+														<div class="input-group">
+															<div class="input-group-prepend"
+																	data-target="#totalPrice">
+																	<div class="input-group-text">Rp.</div>
+															</div>
+															<input type="number" id="totalPrice" name="total_price" class="form-control @error('total_price') is-invalid @enderror" value="{{ old('total_price') }}" placeholder="John Doe" readonly />
+															@error('total_price')
+															<span class="invalid-feedback" role="alert">
+																{{ $message }}
+															</span>
+															@enderror
+														</div>
+													</div>
+												</div>
+											</div>
+											
+											
+											<div class="form-group">
+												<button type="submit" name="generate_invoice" class="form-control btn btn-primary" value="false">Simpan</button>
+												<button type="submit" name="generate_invoice" class="form-control btn btn-warning mt-2" value="true">Simpan dan Generate Invoice</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+							<!-- /.col-12 -->
+						</div>
+						<!-- /.row -->
+						</div><!-- /.container-fluid -->
+					</div>
+					<!-- /.content -->
+				</div>
+				<!-- /.content-wrapper -->
+
+
+@section('custom-import-js')
+    <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+    <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
+@endsection
+@section('custom-js')
+
+    var cycle = 'yearly';
+    var tempCycle = '';
+    var period = 1;
+
+    $(document).ready(function(){
+        setNomorInvoice();
+        setPeriodText();
+    });
+
+    $("#serviceCategory").change(function(){
+            $.ajax({
+                url: "get-services/" + $(this).val(),
+                method: 'GET',
+                success: function(data) {
+                    $('#service').html(data.html);
+                }
+            });
+    });
+
+    $(".minOne").blur(function () {
+        if ($(this).val() == "" || $(this).val() == "0") {
+            $(this).val(1);
+        } 
+    });
+
+    $(function () {
+        $('.select2-client').select2();
+        $('.select2-service-category').select2();
+        $('.select2-service').select2();
+    });
+
+
+    $('#tanggalInvoice').datetimepicker({
+        format: 'DD-MM-YYYY',
+        @if(old('invoice_date'))
+        date: new Date('{{ formatDate(old('invoice_date'), 'm/d/Y') }}')
+        @else
+        date: new Date()
+        @endif
+    });
+
+    $('#startDate').datetimepicker({
+        format: 'DD-MM-YYYY',
+        @if(old('start_date'))
+        date: new Date('{{ formatDate(old('start_date'), 'm/d/Y') }}')
+        @else
+        date: new Date()
+        @endif
+    });
+
+
+    $('#endDate').datetimepicker({
+        format: 'DD-MM-YYYY',
+        @if(old('end_date'))
+        date: new Date('{{ formatDate(old('end_date'), 'm/d/Y') }}')
+        @else
+        date: new Date()
+        @endif
+    });
+
+    $('#dueDate').datetimepicker({
+        format: 'DD-MM-YYYY',
+        @if(old('due_date'))
+        date: new Date('{{ formatDate(old('due_date'), 'm/d/Y') }}')
+        @else
+        date: new Date()
+        @endif
+    });
+
+    $('#service').change(function(){
+
+        tempCycle = $('#service option:selected').data('cycle');
+        tempPrice = $('#service option:selected').data('price');
+
+        if(tempCycle != ''){
+            cycle = tempCycle;
+        }
+
+        period = $('#totalPeriod').val();
+        let startDate = $('#startDateInput').val();
+        let endDate = '';
+        let cycleText = 'Bulan';
+
+        if(cycle == 'monthly'){
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'months').subtract(1, 'days').format('DD-MM-YYYY');
+            cycleText = 'Bulan';
+        }else{
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'years').subtract(1, 'days').format('DD-MM-YYYY');
+            cycleText = 'Tahun';
+        }
+        console.log(tempPrice + ' * ' +period);
+        let totalPrice = Number(tempPrice) * Number(period) + Number(tempPrice) * Number(period) * 0.1;
+
+        $('#totalPrice').val(totalPrice);
+        $('#endDateInput').val(endDate);
+        $('#totalPeriodText').text(cycleText);
+        setPeriodText();
+    });
+
+    $('#totalPeriod').change(function(){
+
+        tempCycle = $('#service option:selected').data('cycle');
+        if(tempCycle != ''){
+            cycle = tempCycle;
+        }
+        console.log(cycle);
+        period = $(this).val();
+        let startDate = $('#startDateInput').val();
+        let endDate = '';
+
+        if(cycle == 'monthly'){
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'months').subtract(1, 'days').format('DD-MM-YYYY');
+        }else{
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'years').subtract(1, 'days').format('DD-MM-YYYY');
+        }
+
+        let dueDate = moment(startDate, 'DD-MM-YYYY').add(10, 'days').format('DD-MM-YYYY');
+        $('#dueDateInput').val(dueDate);
+        $('#endDateInput').val(endDate);
+    });
+
+    $('#startDateInput').on('input',function(){
+        tempCycle = $('#service option:selected').data('cycle');
+        if(tempCycle != ''){
+            cycle = tempCycle;
+        }
+
+        period = $('#totalPeriod').val();
+        let startDate = $('#startDateInput').val();
+        let endDate = '';
+
+        if(cycle == 'monthly'){
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'months').subtract(1, 'days').format('DD-MM-YYYY');
+        }else{
+            endDate = moment(startDate, 'DD-MM-YYYY').add(period, 'years').subtract(1, 'days').format('DD-MM-YYYY');
+        }
+        let dueDate = moment(startDate, 'DD-MM-YYYY').add(10, 'days').format('DD-MM-YYYY');
+        $('#dueDateInput').val(dueDate);
+        $('#endDateInput').val(endDate);
+    });
+
+
+    $('#tanggalInvoice').on('input',function(){
+        
+        let startDate = $('#tanggalInvoice').val();
+        
+    });
+
+    $(document).ready(function() {
+        setTimeout(function() {
+        $(".alert").alert('close');
+        }, 3000);
+    });
+
+    function setPeriodText(){
+
+    	if(cycle == 'monthly'){
+    		$('#totalPeriodText').text("Bulan");
+    	}else{
+    		$('#totalPeriodText').text("Tahun");
+    	}
+    }
+    function setNomorInvoice(){
+    	let month = new Date().getMonth();
+    	let year  = new Date().getFullYear();
+    	let user  = '{{ auth()->user()->inisial }}';
+    	let type  = 'INV-IMN';
+    	let text  = 'XX/INV-IMN/'+user+'/'+toRoman(month)+'/'+year;
+    	$('#nomorInvoice').val(text);
+    }
+
+    function toRoman(num){
+    	if(num < 1){ return "";}
+    	  if(num >= 10){ return "X" + toRoman(num - 10);}
+		  if(num >= 9){ return "IX" + toRoman(num - 9);}
+		  if(num >= 5){ return "V" + toRoman(num - 5);}
+		  if(num >= 4){ return "IV" + toRoman(num - 4);}
+		  if(num >= 1){ return "I" + toRoman(num - 1);} 
+    }
+
+@endsection
+@endsection
