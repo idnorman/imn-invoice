@@ -78,6 +78,9 @@ Route::group([
     Route::get('ubah/{id}', [ServiceController::class, 'edit'])->name('services.edit');
     Route::put('perbarui', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('hapus', [ServiceController::class, 'destroy'])->name('services.delete');
+
+    Route::get('pdf/', [ServiceController::class, 'pdf'])->name('services.pdf');
+    Route::get('excel/', [ServiceController::class, 'excel'])->name('services.excel');
 });
 
 
@@ -92,6 +95,9 @@ Route::group([
     Route::get('ubah/{id}', [ClientController::class, 'edit'])->name('clients.edit');
     Route::put('perbarui', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('hapus', [ClientController::class, 'destroy'])->name('clients.delete');
+
+    Route::get('pdf/', [ClientController::class, 'pdf'])->name('clients.pdf');
+    Route::get('excel/', [ClientController::class, 'excel'])->name('clients.excel');
 });
 
 
@@ -114,8 +120,9 @@ Route::group([
 
     Route::get('preview/{id}',[InvoiceController::class, 'preview'])->name('invoices.preview');
     Route::get('unduh/{id}',[InvoiceController::class, 'download'])->name('invoices.download');
-});
 
+    Route::get('email/{id}',[InvoiceController::class, 'email'])->name('invoices.email');
+});
 
 Route::group([
     'prefix' => 'transaksi',

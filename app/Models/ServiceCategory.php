@@ -11,7 +11,7 @@ class ServiceCategory extends Model
 
     protected $guarded = ['id'];
 
-    public function letter(){
-        return $this->hasMany(Service::class);
+    public function service(){
+        return $this->hasMany(Service::class, 'kategori');
     }
 }

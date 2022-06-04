@@ -3,17 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Invoice;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 
+use PDF;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Exports\ClientExport;
+
 class ClientController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
         $clients = Client::all();
-        return view('pages.client.index', compact('clients'));
+        $clientStatus = 'unknown';
+
+        if($request->status == 'semua'){
+            $clientStatus = 'semua';
+            $clients = Client::all();
+        }
+
+        if($request->status == 'aktif'){
+            $clientStatus = 'aktif';
+            $now = date('Y-m-d');
+            $clients = Invoice::with('client')
+                    ->whereDate('tanggal_selesai', '>=', $now)
+                    ->get()
+                    ->pluck('client')
+                    ->flatten();
+        }
+
+        if($request->status == 'nonaktif'){
+            $clientStatus = 'nonaktif';
+            $now = date('Y-m-d');
+            $clients = Invoice::with('client')
+                    ->whereDate('tanggal_selesai', '<', $now)
+                    ->get()
+                    ->pluck('client')
+                    ->flatten();
+        }
+
+        return view('pages.client.index', compact('clients', 'clientStatus'));
     }
 
     public function store(Request $request)
@@ -90,5 +124,49 @@ class ClientController extends Controller
         $client->delete();
 
         return back()->with('success', 'Data Berhasil di Hapus');
+    }
+
+    public function pdf(Request $request){
+        $clients = Client::all();
+        $clientStatus = 'unknown';
+
+        if($request->status == 'semua'){
+            $clientStatus = 'semua';
+            $clients = Client::all();
+        }
+
+        if($request->status == 'aktif'){
+            $clientStatus = 'aktif';
+            $now = date('Y-m-d');
+            $clients = Invoice::with('client')
+                    ->whereDate('tanggal_selesai', '>=', $now)
+                    ->get()
+                    ->pluck('client')
+                    ->flatten();
+        }
+
+        if($request->status == 'nonaktif'){
+            $clientStatus = 'nonaktif';
+            $now = date('Y-m-d');
+            $clients = Invoice::with('client')
+                    ->whereDate('tanggal_selesai', '<', $now)
+                    ->get()
+                    ->pluck('client')
+                    ->flatten();
+        }
+
+        $filename = 'Data Klien PT. Instanet Media Nusantara.pdf';
+
+        $pdf = PDF::loadView('pages.client.pdf', compact('clients', 'clientStatus'));
+        $pdf->setPaper('a4', 'portrait');
+
+
+        return $pdf->stream($filename);
+    }
+
+    public function excel(Request $request){
+
+        return Excel::download(new ClientExport($request->status), 'Data Klien PT. IMN.xlsx');
+  
     }
 }

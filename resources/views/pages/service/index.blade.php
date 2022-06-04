@@ -44,6 +44,35 @@
                                 <a href="" class="btn btn-primary" data-toggle="modal" data-target="#modal-create">Tambah</a>
                             </div>
                             @endif
+                            <div class="card-header">
+                                
+                                <form action="{{ route('services.index') }}" method="get">
+                                    <div class="row">
+
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                            <div class="d-block">
+                                                <label>Kategori</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="kategori" id="kategori" class="form-control">
+                                                    <option {{ ($kategori == 'null') ? 'selected' : '' }} value="null">---</option>
+                                                    @foreach($serviceCategories as $serviceCategory)
+                                                        <option {{ ($kategori == $serviceCategory->id) ? 'selected' : '' }} value="{{ $serviceCategory->id }}">{{ $serviceCategory->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="d-block">
+                                                <label>&nbsp;</label>
+                                            </div>
+                                            <button class="btn btn-outline-primary" type="submit">Filter</button>
+                                            <a class="btn btn-outline-warning" id="btn-pdf-export" href="" target="_blank">Cetak PDF</a>
+                                            <a class="btn btn-outline-success" id="btn-excel-export" href="" target="_blank">Cetak Excel</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="service-categories-table" class="table table-bordered table-striped">
@@ -53,6 +82,9 @@
                                             <th>Kategori</th>
                                             <th>Nama</th>
                                             <th>Harga(per bulan)</th>
+                                            @if(auth()->user()->is_superadmin == 1)
+                                            <th>Total Transaksi</th>
+                                            @endif
                                             @if(auth()->user()->is_superadmin == 0)
                                             <th>Aksi</th>
                                             @endif
@@ -65,9 +97,11 @@
                                                 <td>{{ $service->service_category->nama }}</td>
                                                 <td>{{ $service->nama }}</td>
                                                 <td>Rp. {{ formatPrice($service->harga) }}</td>
+                                                @if(auth()->user()->is_superadmin == 1)
+                                                <td>{{ $service->invoice_count }}</td>
+                                                @endif
                                                 @if(auth()->user()->is_superadmin == 0)
                                                 <td>
-
                                                     <a href="" class="btn btn-sm btn-warning" data-toggle="modal"
                                                         data-target="#modal-edit" data-id="{{ $service->id }}" data-nama="{{ $service->nama }}" data-harga="{{ $service->harga }}" data-kategori="{{ $service->kategori }}">Ubah</a>
                                                     <a href="" class="btn btn-sm btn-danger" data-toggle="modal"
@@ -84,6 +118,9 @@
                                             <th>Kategori</th>
                                             <th>Nama</th>
                                             <th>Harga(per bulan)</th>
+                                            @if(auth()->user()->is_superadmin == 1)
+                                            <th>Total Transaksi</th>
+                                            @endif
                                             @if(auth()->user()->is_superadmin == 0)
                                             <th>Aksi</th>
                                             @endif
@@ -296,6 +333,24 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 @endsection
 @section('custom-js')
+
+    $('document').ready(function(){
+        $("#kategori").on('change', function(){
+            let kategori = $(this).val();
+            exportBtn.set(kategori);
+        });
+        let kategori = $('#kategori').val();
+        $('#btn-pdf-export').attr('href','{{ route('services.pdf') }}' + '/?kategori=' + kategori);
+        $('#btn-excel-export').attr('href', '{{ route('services.excel') }}' + '/?kategori=' + kategori);
+    });
+
+    const exportBtn = {
+        set: function(val){
+            $('#btn-pdf-export').attr('href','{{ route('services.pdf') }}' + '/?kategori=' + val);
+            $('#btn-excel-export').attr('href', '{{ route('services.excel') }}' + '/?kategori=' + val);
+        }
+    }
+
     @if(auth()->user()->is_superadmin == 0)
     $(function () {
         $('.select2-create-kategori').select2();
@@ -325,7 +380,7 @@
     $("#service-categories-table").DataTable({
     "responsive": true, "lengthChange": true, "autoWidth": true,
     "language": {
-        "zeroRecords": "Belum ada data jenis surat",
+        "zeroRecords": "Data kosong",
         "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
         "infoEmpty": "Menampilkan 0 dari 0 data",
         "lengthMenu": "Menampilkan _MENU_ data",
@@ -344,7 +399,7 @@
     { "width": "20%", "targets": 1 },
     { "width": "30%", "targets": 2 }
   	],
-    "buttons": [
+    {{-- "buttons": [
         {
             extend: 'copyHtml5',
             exportOptions: {
@@ -378,7 +433,7 @@
         {
             extend: 'colvis'
         }
-    ]
+    ] --}}
     }).buttons().container().appendTo('#service-categories-table_wrapper .col-md-6:eq(0)');
     
     });

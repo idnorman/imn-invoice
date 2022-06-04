@@ -60,7 +60,8 @@
                                                 <td>{{ $user->nama }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-
+                                                    <a href="" class="btn btn-sm btn-info" data-toggle="modal"
+                                                        data-target="#modal-detail" data-nama="{{ $user->nama }}" data-email="{{ $user->email }}" data-inisial="{{ $user->inisial }}" data-telepon="{{ $user->telepon }}" data-jabatan="{{ $user->jabatan }}">Detail</a>
                                                     <a href="{{ route('users.edit', $user->id) }}"
                                                         class="btn btn-sm btn-warning">Edit</a>
                                                     <a href="" class="btn btn-sm btn-danger" data-toggle="modal"
@@ -92,6 +93,55 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    {{-- Detail Modal --}}
+    <div class="modal fade" id="modal-detail">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title modal-detail-title">Tambah Kategori</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="detail_nama">Nama</label>
+                        <input type="text" name="detail_nama"
+                        class="form-control" id="detail_nama"
+                        value="" placeholder="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="detail_inisial">Inisial</label>
+                        <input type="text" name="detail_inisial"
+                        class="form-control" id="detail_inisial"
+                        value="" placeholder="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="detail_email">Email</label>
+                        <input type="text" name="detail_email"
+                        class="form-control" id="detail_email"
+                        value="" placeholder="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="detail_telepon">No. HP</label>
+                        <input type="text" name="detail_telepon"
+                        class="form-control" id="detail_telepon"
+                        value="" placeholder="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="detail_jabatan">Jabatan</label>
+                        <input type="text" name="detail_jabatan"
+                        class="form-control" id="detail_jabatan"
+                        value="" placeholder="" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+    <!-- /.modal -->
 
     {{-- Modal --}}
     <div class="modal fade" id="modal-default">
@@ -157,7 +207,7 @@
         }
     },
     {{-- "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"] --}}
-    "buttons": [
+    {{-- "buttons": [
         {
             extend: 'copyHtml5',
             exportOptions: {
@@ -191,8 +241,33 @@
         {
             extend: 'colvis'
         }
-    ]
+    ] --}}
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+
+    $('#modal-detail').on('show.bs.modal', function(e) {
+
+        //get data-id attribute of the clicked element
+        var nama = $(e.relatedTarget).data('nama');
+        var inisial = $(e.relatedTarget).data('inisial');
+        var email = $(e.relatedTarget).data('email');
+        var telepon = $(e.relatedTarget).data('telepon');
+        var jabatan = $(e.relatedTarget).data('jabatan');
+
+        $(e.currentTarget).find('.modal-detail-title').text('Detail ' + nama);
+
+        $(e.currentTarget).find('input[name="detail_nama"]').val(nama);
+        $(e.currentTarget).find('input[name="detail_inisial"]').val(inisial);
+        $(e.currentTarget).find('input[name="detail_email"]').val(email);
+        $(e.currentTarget).find('input[name="detail_telepon"]').val(telepon);
+        $(e.currentTarget).find('input[name="detail_jabatan"]').val(jabatan);
+
+        $(e.currentTarget).find('input[name="detail_nama"]').attr('placeholder', nama);
+        $(e.currentTarget).find('input[name="detail_inisial"]').attr('placeholder', inisial);
+        $(e.currentTarget).find('input[name="detail_email"]').attr('placeholder', email);
+        $(e.currentTarget).find('input[name="detail_telepon"]').attr('placeholder', telepon);
+        $(e.currentTarget).find('input[name="detail_jabatan"]').attr('placeholder', jabatan);
+
     });
 
     //triggered when modal is about to be shown
@@ -204,6 +279,8 @@
         $(e.currentTarget).find('input[name="id"]').val(id);
 
     });
+
+
 
     $(document).ready(function() {
         setTimeout(function() {

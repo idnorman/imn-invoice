@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\ServiceCategory;
 use App\Models\Service;
+use App\Models\User;
 
+use Illuminate\Support\Facades\Mail;
 use PDF;
 
 class InvoiceController extends Controller
@@ -37,9 +39,6 @@ class InvoiceController extends Controller
         return view('pages.invoice.create', compact('clients', 'serviceCategories'));
     }
 
-    public function generate(){
-
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -208,17 +207,10 @@ class InvoiceController extends Controller
         $invoice = Invoice::with(['client', 'service.service_category', '_user'])->where('invoices.id', $id)->first();
 
         $filename = $invoice->client->nama . '_' . $invoice->service->nama . '.pdf';
-        // return view('pages.invoice.template', compact('invoice'));
 
-        // dd($invoice);
-        // share data to view
-        // view()->share('invoice',$invoice);
-        $tanda_tangan['status'] = false;
-        $pdf = PDF::loadView('pages.invoice.template', compact('invoice', 'tanda_tangan'));
-        $pdf->setPaper('letter', 'portrait');
+        $pdf = PDF::loadView('pages.invoice.template', compact('invoice'));
+        $pdf->setPaper('a4', 'portrait');
 
-
-        // download PDF file with download method
         return $pdf->stream($filename);
     }
 
@@ -226,17 +218,27 @@ class InvoiceController extends Controller
         $invoice = Invoice::with(['client', 'service.service_category', '_user'])->where('invoices.id', $id)->first();
 
         $filename = $invoice->client->nama . '_' . $invoice->service->nama . '.pdf';
-        // return view('pages.invoice.template', compact('invoice'));
 
-        // dd($invoice);
-        // share data to view
-        // view()->share('invoice',$invoice);
-        $tanda_tangan['status'] = false;
-        $pdf = PDF::loadView('pages.invoice.template', compact('invoice', 'tanda_tangan'));
-        $pdf->setPaper('letter', 'portrait');
+        $pdf = PDF::loadView('pages.invoice.template', compact('invoice'));
+        $pdf->setPaper('a4', 'portrait');
 
-
-        // download PDF file with download method
         return $pdf->download($filename);
+    }
+
+    public function email($id){
+        $invoice = Invoice::with(['client', 'service.service_category', '_user'])->where('invoices.id', $id)->first();
+
+        $user = User::select('email', 'nama')->where('id', $invoice->_user->id)->first();
+
+        $filename = $invoice->client->nama . '_' . $invoice->service->nama . '.pdf';
+
+        $pdf = PDF::loadView('pages.invoice.templateWithSign', compact('invoice'));
+        Mail::send('pages.invoice.mail', ['invoice' => $invoice], function($message) use ($invoice, $user, $pdf){
+            $message->to($user->email)
+                    ->subject('Tagihan ' . $invoice->service->nama)
+                    ->attachData($pdf->output(), $user->nama . '-' . $invoice->service->nama . '.pdf');
+        });
+
+        dd('mail sent');
     }
 }

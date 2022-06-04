@@ -6,14 +6,33 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 
+use PDF;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Exports\ServiceExport;
+
 class ServiceController extends Controller
 {
     
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::with('service_category')->get();
+        $services = Service::with('service_category')->withCount('invoice')->get();
         $serviceCategories = ServiceCategory::all();
-        return view('pages.service.index', compact('services', 'serviceCategories'));
+
+        $kategori = 'null';
+
+        if($request->kategori != 'null'){
+                $kategori = $request->kategori;
+                $services = ServiceCategory::with(['service' => function($q){
+                    $q->withCount('invoice');
+                }])
+                ->where('id', $kategori)
+                ->get()
+                ->pluck('service')
+                ->flatten();
+        }
+
+        return view('pages.service.index', compact('services', 'serviceCategories', 'kategori'));
     }
 
     public function store(Request $request)
@@ -76,5 +95,39 @@ class ServiceController extends Controller
     {
         Service::findOrFail($request->_id)->delete();
         return back()->with('success', 'Data berhasil dihapus');
+    }
+
+
+    public function pdf(Request $request)
+    {
+        $services = Service::with('service_category')->withCount('invoice')->get();
+
+        $kategori = 'null';
+
+        if($request->kategori != 'null'){
+                $kategori = $request->kategori;
+                $services = ServiceCategory::with(['service' => function($q){
+                    $q->withCount('invoice');
+                }])
+                ->where('id', $kategori)
+                ->get()
+                ->pluck('service')
+                ->flatten();
+            $kategori = $services->service_category->nama;
+        }
+
+        $filename = 'Data Layanan PT. Instanet Media Nusantara.pdf';
+
+        $pdf = PDF::loadView('pages.service.pdf', compact('services', 'kategori'));
+        $pdf->setPaper('a4', 'portrait');
+
+
+        return $pdf->stream($filename);
+    }
+
+    public function excel(Request $request){
+
+        return Excel::download(new ServiceExport($request->kategori), 'Data Layanan PT. IMN.xlsx');
+  
     }
 }

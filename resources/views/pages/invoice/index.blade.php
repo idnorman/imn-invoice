@@ -72,7 +72,9 @@
                                                 <td><a href="{{ route('invoices.preview', $invoice->id) }}"
                                                         class="btn btn-sm btn-info" target="_blank">Preview</a>
                                                     <a href="{{ route('invoices.download', $invoice->id) }}"
-                                                        class="btn btn-sm btn-success" target="_blank">Unduh</a></td>
+                                                        class="btn btn-sm btn-success" target="_blank">Unduh</a>
+                                                    <a href="{{ route('invoices.email', $invoice->id) }}"
+                                                        class="btn btn-sm btn-primary" target="_blank">Kirim</a></td>
                                             </tr>
                                         @endforeach
 

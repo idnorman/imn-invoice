@@ -43,6 +43,31 @@
                                 <button  data-toggle="modal" data-target="#modal-create" class="btn btn-primary">Tambah</button>
                             </div>
                             @endif
+                            <div class="card-header">
+                                <div class="d-block">
+                                    <label>Status Klien</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                        <form action="{{ route('clients.index') }}" method="get">
+                                            <div class="input-group">
+                                                <select name="status" id="client-status" class="form-control">
+                                                    <option {{ ($clientStatus == 'semua') ? 'selected' : '' }} value="semua">Tampilkan Semua</option>
+                                                    <option {{ ($clientStatus == 'aktif') ? 'selected' : '' }} value="aktif">Aktif</option>
+                                                    <option {{ ($clientStatus == 'nonaktif') ? 'selected' : '' }} value="nonaktif">Non-aktif</option>
+                                                    </select>
+                                              <div class="input-group-append">
+                                                <button class="btn btn-outline-primary" type="submit">Filter</button>
+                                              </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <a class="btn btn-outline-warning" id="btn-pdf-export" href="" target="_blank">Cetak PDF</a>
+                                        <a class="btn btn-outline-success" id="btn-excel-export" href="" target="_blank">Cetak Excel</a> 
+                                    </div>
+                                </div>
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -366,6 +391,23 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 @endsection
 @section('custom-js')
+
+    $('document').ready(function(){
+        $("#client-status").on('change', function(){
+            let status = $(this).val();
+            exportBtn.set(status);
+        });
+        let status = $('#client-status').val();
+        $('#btn-pdf-export').attr('href','{{ route('clients.pdf') }}' + '/?status=' + status);
+        $('#btn-excel-export').attr('href', '{{ route('clients.excel') }}' + '/?status=' + status);
+    });
+
+    const exportBtn = {
+        set: function(val){
+            $('#btn-pdf-export').attr('href','{{ route('clients.pdf') }}' + '/?status=' + val);
+            $('#btn-excel-export').attr('href', '{{ route('clients.excel') }}' + '/?status=' + val);
+        }
+    }
     
     @if(auth()->user()->is_superadmin == 0)
         @if($errors->any())
@@ -405,49 +447,10 @@
             "previous": "Sebelumnya",
             "next": "Selanjutnya"
         },
-        "search": "Cari: ",
-        "buttons": {
-            "copy": "Salin",
-            "colvis": "Filter Kolom"
-        }
+        "search": "Cari: "
     },
-    {{-- "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"] --}}
-    "buttons": [
-        {
-            extend: 'copyHtml5',
-            exportOptions: {
-                columns: [0,2,3,4]
-            }
-        },
-        {
-            extend: 'csvHtml5',
-            exportOptions: {
-                columns: [0,2,3,4]
-            }
-        },
-        {
-            extend: 'excelHtml5',
-            exportOptions: {
-                columns: [0,2,3,4]
-            }
-        },
-        {
-            extend: 'pdfHtml5',
-            exportOptions: {
-                columns: [0,2,3,4]
-            }
-        },
-        {
-            extend: 'print',
-            exportOptions: {
-                columns: [0,2,3,4]
-            }
-        },
-        {
-            extend: 'colvis'
-        }
-    ]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    });
     });
 
 

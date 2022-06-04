@@ -62,7 +62,17 @@
               </p>
             </a>
           </li>
-
+          @if(auth()->user()->is_superadmin == 1)
+          <li class="nav-item">
+            <a href="{{ route('services.index') }}" class="nav-link {{ (request()->segment(1) == 'layanan') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>
+                Layanan
+              </p>
+            </a>
+          </li>
+          @endif
+          @if(auth()->user()->is_superadmin == 0)
           <li class="nav-item {{ (request()->segment(1) == 'layanan') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ (request()->segment(1) == 'layanan') ? 'active' : '' }}">
               <i class="nav-icon fas fa-cogs"></i>
@@ -86,6 +96,8 @@
               </li>
             </ul>
           </li>
+          @endif
+
           @if(auth()->user()->is_superadmin == 0)
           <li class="nav-item">
             <a href="{{ route('invoices.index') }}" class="nav-link {{ (request()->segment(1) == 'invoice') ? 'active' : '' }}">

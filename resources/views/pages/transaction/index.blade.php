@@ -109,11 +109,12 @@
 @section('custom-js')
     $(function () {
     $("#example1").DataTable({
-    "responsive": true, "lengthChange": false, "autoWidth": false,
+    "responsive": true, "lengthChange": true, "autoWidth": true,
     "language": {
-        "zeroRecords": "Belum ada data mobil",
+        "zeroRecords": "Data kosong",
         "info": "Menampilkan _START_ - _END_ dari _TOTAL_ data",
         "infoEmpty": "Menampilkan 0 dari 0 data",
+        "lengthMenu": "Menampilkan _MENU_ data",
         "paginate": {
             "previous": "Sebelumnya",
             "next": "Selanjutnya"
@@ -125,7 +126,7 @@
         }
     },
     {{-- "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"] --}}
-    "buttons": [
+    {{-- "buttons": [
         {
             extend: 'copyHtml5',
             exportOptions: {
@@ -159,7 +160,7 @@
         {
             extend: 'colvis'
         }
-    ]
+    ] --}}
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 
