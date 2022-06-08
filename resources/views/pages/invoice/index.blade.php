@@ -65,8 +65,8 @@
                                                 <td>{{ formatDate($invoice->tanggal_mulai) }} &mdash; {{ formatDate($invoice->tanggal_selesai) }}</td>
                                                 <td>
                                                     <a href="{{ route('invoices.edit', $invoice->id) }}"
-                                                        class="btn btn-sm btn-warning">Ubah</a>
-                                                    <a href="" class="btn btn-sm btn-danger" data-toggle="modal"
+                                                        class="btn btn-sm btn-warning {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }}">Ubah</a>
+                                                    <a href="" class="btn btn-sm btn-danger  {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }}" data-toggle="modal"
                                                         data-target="#modal-default" data-id="{{ $invoice->id }}">Hapus</a>
                                                 </td>
                                                 <td><a href="{{ route('invoices.preview', $invoice->id) }}"

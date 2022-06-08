@@ -47,7 +47,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="px-2 bold no-border arial" colspan="6">Daftar Klien {{ ($clientStatus == 'semua') ? '' : (($clientStatus == 'aktif') ? 'Aktif ' : 'Nonaktif ' ) }}PT. Instanet Media Nusantara</td>
+					<td class="px-2 bold no-border arial" colspan="6">Daftar Klien {{ ($clientStatus == 'aktif') ? 'Aktif ' : (($clientStatus == 'semua' or $clientStatus == 'unknown') ? '' : 'Nonaktif ' ) }}PT. Instanet Media Nusantara</td>
 				</tr>
 				
 				<tr>

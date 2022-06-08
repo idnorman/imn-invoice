@@ -9,14 +9,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
-    <link rel="stylesheet" href="{{ public_path('dist/css/adminlte.min.css') }}">
+    <!-- <link rel="stylesheet" href="{{ public_path('dist/css/adminlte.min.css') }}"> -->
     <style>
       @page{
         margin: 0.5in 0.7in 0in 0.7in;
       }
+
+      *{
+        font-family: Arial, sans-serif;
+      }
+
       .invoice-text{
         font-weight: 900;
         font-size: 25px;
+        font-family: Arial, sans-serif;
       }
       .border-all{
         border:  4px solid black;
@@ -61,6 +67,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
          margin-right: 0;
          background-color:#000;
       }
+      .ml-5{
+        margin-left: 50px;
+      }
 
       .fs-14{
         font-size: 14px;
@@ -69,12 +78,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
         font-size: 11px;
       }
 
+      .font-weight-bold{
+        font-weight: bold;
+      }
+
     </style>
   </head>
   <body>
     <!-- <div class="container"> -->
       <div class="row justify-content-center">
-        <table class="col-12">
+        <table class="col-12" style="width: 100%;">
           <thead>
             <tr>
               <td colspan="3"><span class="font-weight-bold">PT. Instanet Media Nusantara</span></td>
@@ -100,7 +113,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <tr>
               <td rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-1">Kepada</td>
               <td colspan="2" rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-3">{{ $invoice->client->sapaan }} {{ $invoice->client->nama }}</td>
-              <td class="font-weight-bold pl-3">Tanggal Invoice</td>
+              <td class="font-weight-bold pl-3" style="border-right-style: none;">Tanggal Invoice</td>
               <td>{{ idnDate(formatDate($invoice->tanggal_invoice)) }}</td>
             </tr>
             <tr>
@@ -126,13 +139,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </tr>
             <tr>
               <td class="font-weight-bold pl-1">Kontak</td>
-              <td colspan="2" class="pl-3">{{ $invoice->telepon }}</td>
+              <td colspan="2" class="pl-3">{{ $invoice->client->telepon }}</td>
               <td class="font-weight-bold pl-3">Nama Bank</td>
               <td>Bank BCA Pekanbaru</td>
             </tr>
             <tr>
               <td class="border-bottom-3 font-weight-bold pl-1">Fax</td>
-              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->fax }}</td>
+              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->client->fax }}</td>
               <td class="border-bottom-3 font-weight-bold pl-3">No. Rekening</td>
               <td class="border-bottom-3">034-3249621</td>
             </tr>

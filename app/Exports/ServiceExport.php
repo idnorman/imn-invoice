@@ -24,18 +24,19 @@ class ServiceExport implements FromView, WithColumnWidths
     {
         $services = Service::with('service_category')->withCount('invoice')->get();
 
-        $kategori = 'null';
+        $kategori = null;
 
-        if($this->kategori != 'null'){
+        if($this->kategori != null){
                 $kategori = $this->kategori;
-                $services = ServiceCategory::with(['service' => function($q){
-                    $q->withCount('invoice');
-                }])
-                ->where('id', $kategori)
-                ->get()
-                ->pluck('service')
-                ->flatten();
-            $kategori = $services->service_category->nama;
+
+                $services = Service::with('service_category')->where('kategori', $kategori)->withCount('invoice')->get();
+                
+                $kategori = null;
+
+                if(!$services->isEmpty()){
+                    $kategori = $services[0]->service_category->nama;
+                }
+            
         }
 
         return view('pages.service.excel', compact('services', 'kategori'));

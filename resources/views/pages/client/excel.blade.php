@@ -41,12 +41,12 @@
 		<table class="tg">
 			<thead>
 				<tr>
-					<th class="tg-baqh" align="center" valign="middle" colspan="6">PT. Instanet Media Nusantara</th>
+					<th class="tg-baqh bold" align="center" valign="middle" colspan="6">PT. Instanet Media Nusantara</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td class="px-2 bold no-border arial" colspan="6">Daftar Klien {{ ($clientStatus == 'semua') ? '' : (($clientStatus == 'aktif') ? 'Aktif ' : 'Nonaktif ' ) }}PT. Instanet Media Nusantara</td>
+					<td class="px-2 bold no-border arial" colspan="6">Daftar Klien {{ ($clientStatus == 'aktif') ? 'Aktif ' : (($clientStatus == 'semua' or $clientStatus == 'unknown') ? '' : 'Nonaktif ' ) }}PT. Instanet Media Nusantara</td>
 				</tr>
 				
 				<tr>
@@ -65,7 +65,7 @@
 					<td class="border va-middle">{{ $client->alamat }}</td>
 					<td class="border va-middle">{{ $client->email }}</td>
 					<td class="border va-middle">{{ $client->telepon }}</td>
-					<td class="border va-middle">{{ $client->fax }}</td>
+					<td class="border va-middle" align="left">{{ $client->fax }}</td>
 				</tr>
 				@empty
 				<tr>

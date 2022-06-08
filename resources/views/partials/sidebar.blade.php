@@ -2,8 +2,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="brand-link">
-<!--       <img src="{{ asset('_images/site-logo.png') }}" alt="AdminLTE Logo" class="brand-image elevation-3" style="opacity: .8"> -->
-      <span class="brand-text font-weight-bold pl-2">IMN-Invoice</span>
+      <!-- <img src="{{ asset('_images/site-logo.png') }}" alt="AdminLTE Logo" class="brand-image elevation-3" style="opacity: .8"> -->
+      <span class="brand-text font-weight-bold pl-2"><img src="{{ asset('_images/site-logo.png') }}" alt="AdminLTE Logo" class="brand-image"></span>
     </a>
 
     <!-- Sidebar -->

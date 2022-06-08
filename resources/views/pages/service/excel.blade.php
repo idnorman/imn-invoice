@@ -41,7 +41,7 @@
 		<table class="tg">
 			<thead>
 				<tr>
-					<th class="ta-center va-middle" colspan="5">PT. Instanet Media Nusantara</th>
+					<th class="ta-center va-middle" colspan="5" align="center" valign="middle">PT. Instanet Media Nusantara</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -50,24 +50,24 @@
 				</tr>
 				
 				<tr>
-					<th class="border bold ta-center va-middle">No</th>
+					<th class="border bold ta-center va-middle" align="center" valign="middle" >No</th>
 					<th class="border va-middle">Kategori</th>
 					<th class="border va-middle">Layanan</th>
 					<th class="border va-middle">Harga (per bulan)</th>
-					<th class="border va-middle">Total transaksi</th>
+					<th class="border va-middle">Total Transaksi</th>
 				</tr>
 				
 				@forelse($services as $service)
 				<tr>
-					<td class="border ta-center va-middle">{{ $loop->iteration }}</td>
+					<td class="border ta-center va-middle" align="center" valign="middle" >{{ $loop->iteration }}</td>
 					<td class="border va-middle">{{ $service->service_category->nama }}</td>
 					<td class="border va-middle">{{ $service->nama }}</td>
 					<td class="border va-middle">Rp. {{ formatPrice($service->harga) }}</td>
-					<td class="border va-middle">{{ $service->invoice_count }} </td>
+					<td class="border va-middle" align="center" valign="middle">{{ $service->invoice_count }} </td>
 				</tr>
 				@empty
 				<tr>
-					<td class="ta-center va-middle" colspan="5">Data Kosong</td>
+					<td class="border ta-center va-middle" colspan="5" align="center" valign="middle" >Data Kosong</td>
 				</tr>
 				@endforelse
 					

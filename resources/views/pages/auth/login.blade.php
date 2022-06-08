@@ -8,6 +8,7 @@
     <div class="card card-outline card-primary">
       <div class="card-header text-center">
         <a class="h3"><b>Instanet Media Nusantara</b></a>
+        <!-- <img src="{{ asset('_images/logo.png') }}" width="250px" alt=""> -->
       </div>
       <div class="card-body">
         {{-- <p class="login-box-msg">Masuk untuk menggunakan aplikasi</p> --}}

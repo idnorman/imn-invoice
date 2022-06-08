@@ -33,21 +33,16 @@ class ClientExport implements FromView, WithColumnWidths
         if($this->clientStatus == 'aktif'){
             $clientStatus = 'aktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '>=', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+            
+            $clients = Client::whereHas('invoice', function($q) use ($now){
+                $q->whereDate('tanggal_selesai', '>=', $now);
+            })->orderBy('id', 'desc')->get();
         }
 
         if($this->clientStatus == 'nonaktif'){
             $clientStatus = 'nonaktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '<', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+            $clients = Client::doesntHave('invoice')->orderBy('id', 'desc')->get();
         }
 
         return view('pages.client.excel', compact('clients', 'clientStatus'));
@@ -57,7 +52,7 @@ class ClientExport implements FromView, WithColumnWidths
     {
         return [
             'A' => 5,
-            'B' => 15,
+            'B' => 25,
             'C' => 25,
             'D' => 25,
             'E' => 15,

@@ -40,7 +40,45 @@
                         @endif
                         <div class="card">
                             <div class="card-header">
+                                <form action="{{ route('transactions.index') }}" method="get">
+                                    <div class="row">
 
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                            <div class="d-block">
+                                                <label>Klien</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="klien" id="klien" class="form-control">
+                                                    <option {{ ($klien == 'null') ? 'selected' : '' }} value="">---</option>
+                                                    @foreach($clients as $client)
+                                                        <option {{ ($klien == $client->id) ? 'selected' : '' }} value="{{ $client->id }}">{{ $client->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                            <div class="d-block">
+                                                <label>Layanan</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="layanan" id="layanan" class="form-control">
+                                                    <option {{ ($layanan == 'null') ? 'selected' : '' }} value="">---</option>
+                                                    @foreach($services as $service)
+                                                        <option {{ ($layanan == $service->id) ? 'selected' : '' }} value="{{ $service->id }}">{{ $service->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="d-block">
+                                                <label>&nbsp;</label>
+                                            </div>
+                                            <button class="btn btn-outline-primary" type="submit">Filter</button>
+                                            <a class="btn btn-outline-warning" id="btn-pdf-export" href="" target="_blank">Cetak PDF</a>
+                                            <a class="btn btn-outline-success" id="btn-excel-export" href="" target="_blank">Cetak Excel</a>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -62,7 +100,7 @@
                                                 <td>{{ $invoice->service->nama }} &mdash; {{ formatPrice($invoice->service->harga) }}</td>
                                                 <td>{{ idnDate(formatDate($invoice->tanggal_mulai)) }} &mdash; {{ idnDate(formatDate($invoice->tanggal_selesai)) }}</td>
 
-                                                <td>{{ formatPrice($invoice->total_harga) }}</td>
+                                                <td>{{ formatPrice(getTotal($invoice->total_harga)) }}</td>
                                             </tr>
                                         @endforeach
 
@@ -107,6 +145,34 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 @endsection
 @section('custom-js')
+
+    $('document').ready(function(){
+        $("#klien").on('change', function(){
+            let klien = $(this).val();
+            let layanan = $('#layanan').val();
+            exportBtn.set(klien, layanan);
+        });
+        
+        $("#layanan").on('change', function(){
+            let klien = $('#klien').val();
+            let layanan = $(this).val();
+            exportBtn.set(klien, layanan);
+        });
+
+        let klien = $('#klien').val();
+        let layanan = $('#layanan').val();
+
+        $('#btn-pdf-export').attr('href','{{ route('transactions.pdf') }}' + '/?klien=' + klien + '&layanan=' + layanan );
+        $('#btn-excel-export').attr('href', '{{ route('transactions.excel') }}' + '/?klien=' + klien + '&layanan=' + layanan );
+    });
+
+    const exportBtn = {
+        set: function(klien, layanan){
+            $('#btn-pdf-export').attr('href','{{ route('transactions.pdf') }}' + '/?klien=' + klien + '&layanan=' + layanan );
+            $('#btn-excel-export').attr('href', '{{ route('transactions.excel') }}' + '/?klien=' + klien + '&layanan=' + layanan );
+        }
+    }
+
     $(function () {
     $("#example1").DataTable({
     "responsive": true, "lengthChange": true, "autoWidth": true,

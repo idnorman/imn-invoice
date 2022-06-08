@@ -14,9 +14,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
       @page{
         margin: 0.5in 0.7in 0in 0.7in;
       }
+      *{
+        font-family: Arial, sans-serif;
+      }
+
       .invoice-text{
         font-weight: 900;
         font-size: 25px;
+        font-family: Arial, sans-serif;
       }
       .border-all{
         border:  4px solid black;
@@ -97,7 +102,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <body>
     <!-- <div class="container"> -->
       <div class="row justify-content-center">
-        <table class="col-12">
+        <table class="col-12" style="width:100%;">
           <thead>
             <tr>
               <td colspan="3"><span class="font-weight-bold">PT. Instanet Media Nusantara</span></td>

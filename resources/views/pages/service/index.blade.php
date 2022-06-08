@@ -55,7 +55,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <select name="kategori" id="kategori" class="form-control">
-                                                    <option {{ ($kategori == 'null') ? 'selected' : '' }} value="null">---</option>
+                                                    <option {{ ($kategori == null) ? 'selected' : '' }} value="">---</option>
                                                     @foreach($serviceCategories as $serviceCategory)
                                                         <option {{ ($kategori == $serviceCategory->id) ? 'selected' : '' }} value="{{ $serviceCategory->id }}">{{ $serviceCategory->nama }}</option>
                                                     @endforeach

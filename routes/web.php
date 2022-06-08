@@ -129,4 +129,7 @@ Route::group([
     'middleware' => ['auth', 'superadmin']
 ], function(){
     Route::get('', [TransactionController::class, 'index'])->name('transactions.index');
+
+    Route::get('pdf/', [TransactionController::class, 'pdf'])->name('transactions.pdf');
+    Route::get('excel/', [TransactionController::class, 'excel'])->name('transactions.excel');
 });

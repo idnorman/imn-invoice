@@ -22,7 +22,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['client', 'service'])->get();
+        $invoices = Invoice::with(['client', 'service'])->orderBy('id', 'desc')->get();
         return view('pages.invoice.index', compact('invoices'));
     }
 
@@ -239,6 +239,7 @@ class InvoiceController extends Controller
                     ->attachData($pdf->output(), $user->nama . '-' . $invoice->service->nama . '.pdf');
         });
 
-        dd('mail sent');
+        return redirect()->route('invoices.index')->with('success', 'Invoice berhasil dikirim');
+
     }
 }

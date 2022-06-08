@@ -47,17 +47,8 @@ class UserController extends Controller
 
         $this->validate($request, $rules, $messages);
 
-
-        // $data               = $request->except('_token', 'password_confirmation', 'signature');
         $data['password']   = Hash::make($request->password);
 
-        // if($request->signature){
-        //     $signature         = $request->signature;
-        //     $fileName          = Str::random(8) . '_' . $signature->getClientOriginalName();
-        //     $signature         = $signature->move(public_path() . '/_images/signature/', $fileName);
-        //     $data['signature']  = $fileName;
-        // }
-        
         $data = [
             'nama' => $request->nama,
             'inisial' => $request->inisial,
@@ -70,14 +61,13 @@ class UserController extends Controller
 
         User::insert($data);
         
-        return route('users.index')->with('success', 'Data Pengguna Berhasil di Tambah');
+        return redirect()->route('users.index')->with('success', 'Data Pengguna Berhasil di Tambah');
     }
 
     public function show($id)
     {
         $user = User::find($id);
-        // $rentals = Rental::with(['car'])->where('user_id', $id)->paginate(4);
-        // return view('pages.user.show', compact('user', 'rentals'));
+
     }
 
     public function edit($id)
@@ -128,22 +118,6 @@ class UserController extends Controller
 
         $this->validate($request, $rules, $messages);
 
-
-        // $fileName = $user->signature;
-        // if($request->signature){
-        //     $oldfileName  = $fileName;
-
-        //     $signature         = $request->signature;
-        //     $fileName          = Str::random(8) . '_' . $signature->getClientOriginalName();
-        //     $signature         = $signature->move(public_path() . '/_images/signature/', $fileName);
-
-        //     if(!empty($oldfileName)){
-        //         $oldfileName  = unlink(public_path('/_images/signature/' . $oldfileName));
-        //     }
-        // }
-
-        // $data          = $request->except('_token', 'password_confirmation', 'signature');
-        // $data['signature']  = $fileName;
         $data = [
             'nama' => $request->nama,
             'inisial' => $request->inisial,
@@ -160,15 +134,15 @@ class UserController extends Controller
         
         $user->update($data);
         
-        return back()->with('success', 'Data Berhasil di Ubah');
+        return redirect()->route('users.index')->with('success', 'Data Berhasil di Ubah');
     }
 
     public function destroy(Request $request)
     {
         $user = User::find($request->id);
-        // if($user->signature){
-        //     unlink(public_path('/_images/signature/' . $user->signature));
-        // }
+        if($user->tanda_tangan){
+            unlink(public_path('/_images/tanda_tangan/' . $user->tanda_tangan));
+        }
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Pengguna Berhasil di Hapus');
     }

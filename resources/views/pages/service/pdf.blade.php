@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Datatara</title>
+		<title>Daftar Layanan PT. Instanet Media Nusantara</title>
 		<style type="text/css">
 		@page{
         	margin: 0.5in 0.7in 0in 0.7in;
@@ -51,11 +51,11 @@
 				</tr>
 				
 				<tr>
-					<th class="border bold ta-center va-middle">No</th>
+					<th class="border bold ta-center va-middle" width="7%">No</th>
 					<th class="border va-middle">Kategori</th>
 					<th class="border va-middle">Layanan</th>
 					<th class="border va-middle">Harga (per bulan)</th>
-					<th class="border va-middle">Total transaksi</th>
+					<th class="border va-middle ta-center">Total transaksi</th>
 				</tr>
 				
 				@forelse($services as $service)
@@ -64,11 +64,11 @@
 					<td class="border va-middle">{{ $service->service_category->nama }}</td>
 					<td class="border va-middle">{{ $service->nama }}</td>
 					<td class="border va-middle">Rp. {{ formatPrice($service->harga) }}</td>
-					<td class="border va-middle">{{ $service->invoice_count }}</td>
+					<td class="border va-middle ta-center">{{ $service->invoice_count }}</td>
 				</tr>
 				@empty
 				<tr>
-					<td class="ta-center va-middle" colspan="5">Data Kosong</td>
+					<td class="border ta-center va-middle" colspan="5">Data Kosong</td>
 				</tr>
 				@endforelse
 					

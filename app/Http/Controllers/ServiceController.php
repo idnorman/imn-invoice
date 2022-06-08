@@ -19,17 +19,12 @@ class ServiceController extends Controller
         $services = Service::with('service_category')->withCount('invoice')->get();
         $serviceCategories = ServiceCategory::all();
 
-        $kategori = 'null';
+        $kategori = null;
 
-        if($request->kategori != 'null'){
+        if($request->kategori != null){
                 $kategori = $request->kategori;
-                $services = ServiceCategory::with(['service' => function($q){
-                    $q->withCount('invoice');
-                }])
-                ->where('id', $kategori)
-                ->get()
-                ->pluck('service')
-                ->flatten();
+
+                $services = Service::with('service_category')->where('kategori', $kategori)->withCount('invoice')->get();
         }
 
         return view('pages.service.index', compact('services', 'serviceCategories', 'kategori'));
@@ -102,18 +97,18 @@ class ServiceController extends Controller
     {
         $services = Service::with('service_category')->withCount('invoice')->get();
 
-        $kategori = 'null';
+        $kategori = null;
 
-        if($request->kategori != 'null'){
+        if($request->kategori != null){
                 $kategori = $request->kategori;
-                $services = ServiceCategory::with(['service' => function($q){
-                    $q->withCount('invoice');
-                }])
-                ->where('id', $kategori)
-                ->get()
-                ->pluck('service')
-                ->flatten();
-            $kategori = $services->service_category->nama;
+
+                $services = Service::with('service_category')->where('kategori', $kategori)->withCount('invoice')->get();
+                
+                $kategori = null;
+
+                if(!$services->isEmpty()){
+                    $kategori = $services[0]->service_category->nama;
+                }
         }
 
         $filename = 'Data Layanan PT. Instanet Media Nusantara.pdf';

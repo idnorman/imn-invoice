@@ -30,21 +30,17 @@ class ClientController extends Controller
         if($request->status == 'aktif'){
             $clientStatus = 'aktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '>=', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+
+            $clients = Client::whereHas('invoice', function($q) use ($now){
+                $q->whereDate('tanggal_selesai', '>=', $now);
+            })->get();
         }
 
         if($request->status == 'nonaktif'){
             $clientStatus = 'nonaktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '<', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+
+            $clients = Client::doesntHave('invoice')->get();
         }
 
         return view('pages.client.index', compact('clients', 'clientStatus'));
@@ -138,21 +134,16 @@ class ClientController extends Controller
         if($request->status == 'aktif'){
             $clientStatus = 'aktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '>=', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+
+            $clients = Client::whereHas('invoice', function($q) use ($now){
+                $q->whereDate('tanggal_selesai', '>=', $now);
+            })->get();
         }
 
         if($request->status == 'nonaktif'){
             $clientStatus = 'nonaktif';
             $now = date('Y-m-d');
-            $clients = Invoice::with('client')
-                    ->whereDate('tanggal_selesai', '<', $now)
-                    ->get()
-                    ->pluck('client')
-                    ->flatten();
+            $clients = Client::doesntHave('invoice')->get();
         }
 
         $filename = 'Data Klien PT. Instanet Media Nusantara.pdf';
