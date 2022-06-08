@@ -57,6 +57,7 @@
 									</div>
 								</div>
 							</div>
+
 							<div class="col-lg-3 col-6">
 								<div class="small-box bg-warning">
 									<div class="inner">
@@ -71,6 +72,7 @@
 									</div>
 								</div>
 							</div>
+							@if(auth()->user()->is_superadmin == 0)
 							<div class="col-lg-3 col-6">
 								<div class="small-box bg-danger">
 									<div class="inner">
@@ -86,8 +88,27 @@
 									</div>
 								</div>
 							</div>
+							@endif
+							@if(auth()->user()->is_superadmin == 1)
+							<div class="col-lg-3 col-6">
+								<div class="small-box bg-danger">
+									<div class="inner">
+										<h3>{{ $total['invoice'] }}</h3>
+										<p>Transaksi</p>
+									</div>
+									<div class="icon">
+										<i class="fas fa-file"></i>
+									</div>
+									
+									<div class="small-box-footer">
+										<a href="{{ route('transactions.index') }}" class="small-box-footer text-white">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+							</div>
+							@endif
 						</div>
 
+						@if(auth()->user()->is_superadmin == 1)
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="card">
@@ -139,7 +160,9 @@
 								</div>
 							</div>
 						</div>
-												<div class="row">
+						@endif
+						
+						<div class="row">
 							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 								<div class="card">
 									<div class="card-header font-weight-bold">Transaksi 7 Hari yang lalu</div>
@@ -173,7 +196,9 @@
 									</div>
 								</div>
 							</div>
-						</div>					
+						</div>
+
+
 						<!-- /.row -->
 						</div><!-- /.container-fluid -->
 					</div>

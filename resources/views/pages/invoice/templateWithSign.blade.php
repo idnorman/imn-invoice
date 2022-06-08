@@ -9,11 +9,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
-    <link rel="stylesheet" href="{{ public_path('dist/css/adminlte.min.css') }}">
+    <!-- <link rel="stylesheet" href="{{ public_path('dist/css/adminlte.min.css') }}"> -->
     <style>
       @page{
         margin: 0.5in 0.7in 0in 0.7in;
       }
+
       *{
         font-family: Arial, sans-serif;
       }
@@ -66,6 +67,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
          margin-right: 0;
          background-color:#000;
       }
+      .ml-5{
+        margin-left: 50px;
+      }
 
       .fs-14{
         font-size: 14px;
@@ -74,13 +78,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
         font-size: 11px;
       }
 
+      .font-weight-bold{
+        font-weight: bold;
+      }
+
       .tanda-tangan
       {
           display: inline-block;
           width: 200px;
           height: 100px;
           position: relative;
-          background: url("{{ public_path('_images/logo.png') }}") no-repeat;
+          background: url("{{ public_path('_images/tanda_tangan/' . $invoice->_user->tanda_tangan) }}") no-repeat;
           background-size: 200px auto;
 
       }
@@ -91,9 +99,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           position: absolute;
           width: 200px;
           height: 100px;
-          /*top: 10px;*/
-          /*left: 40px;*/
-          background: url("{{ public_path('_images/tanda_tangan/' . $invoice->_user->tanda_tangan) }}") no-repeat;
+          background: url("{{ public_path('_images/cap.png') }}") no-repeat;
           background-size: 200px auto;
       }
 
@@ -154,13 +160,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </tr>
             <tr>
               <td class="font-weight-bold pl-1">Kontak</td>
-              <td colspan="2" class="pl-3">{{ $invoice->telepon }}</td>
+              <td colspan="2" class="pl-3">{{ $invoice->client->telepon }}</td>
               <td class="font-weight-bold pl-3">Nama Bank</td>
               <td>Bank BCA Pekanbaru</td>
             </tr>
             <tr>
               <td class="border-bottom-3 font-weight-bold pl-1">Fax</td>
-              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->fax }}</td>
+              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->client->fax }}</td>
               <td class="border-bottom-3 font-weight-bold pl-3">No. Rekening</td>
               <td class="border-bottom-3">034-3249621</td>
             </tr>
@@ -231,9 +237,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <td></td>
               <td></td>
               <td></td>
-              <td colspan="2" class="v-align-bottom" height="200px">
-
-                <div class="tanda-tangan"></div>
+              <td colspan="2" class="v-align-bottom h-align-right" height="200px">
+                <div class="tanda-tangan" style="padding-right: 30px;"></div>
                 <hr>
               </td>
             </tr>

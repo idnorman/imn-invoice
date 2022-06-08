@@ -43,6 +43,7 @@
                                 <button  data-toggle="modal" data-target="#modal-create" class="btn btn-primary">Tambah</button>
                             </div>
                             @endif
+                            @if(auth()->user()->is_superadmin == 1)
                             <div class="card-header">
                                 <div class="d-block">
                                     <label>Status Klien</label>
@@ -68,6 +69,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -77,9 +79,7 @@
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>Alamat</th>
-                                            @if(auth()->user()->is_superadmin == 0)
                                             <th>Aksi</th>
-                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,8 +90,20 @@
                                                 <td>{{ $client->email }}</td>
                                                 <td>{{ $client->alamat }}</td>
 
-                                                @if(auth()->user()->is_superadmin == 0)
                                                 <td>
+                                                    <a href="" class="btn btn-sm btn-info"
+                                                        data-toggle="modal"
+                                                        data-target="#modal-detail" 
+                                                        data-id="{{ $client->id }}"
+                                                        data-nama="{{ $client->nama }}"
+                                                        data-sapaan="{{ $client->sapaan }}"
+                                                        data-alamat="{{ $client->alamat }}"
+                                                        data-email="{{ $client->email }}"
+                                                        data-telepon="{{ $client->telepon }}"
+                                                        data-fax="{{ $client->fax }}"
+                                                        >Detail
+                                                    </a>
+                                                    @if(auth()->user()->is_superadmin == 0)
                                                     <a href="" class="btn btn-sm btn-warning"
                                                         data-toggle="modal"
                                                         data-target="#modal-edit" 
@@ -106,8 +118,9 @@
                                                     </a>
                                                     <a href="" class="btn btn-sm btn-danger" data-toggle="modal"
                                                         data-target="#modal-delete" data-id="{{ $client->id }}" data-name="{{ $client->name }}">Hapus</a>
+                                                    @endif
                                                 </td>
-                                                @endif
+
                                             </tr>
                                         @endforeach
 
@@ -118,10 +131,7 @@
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>Alamat</th>
-
-                                            @if(auth()->user()->is_superadmin == 0)
                                             <th>Aksi</th>
-                                            @endif
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -140,6 +150,65 @@
     <!-- /.content-wrapper -->
 
 
+{{-- Detail Modal --}}
+<div class="modal fade" id="modal-detail">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-detail-title">Detail Data Klien</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modal-detail-body">
+                <div class="form-group">
+                    <label for="detail_nama">Klien</label>
+                    <input type="text" name="detail_nama"
+                    class="form-control" id="detail_nama"
+                    value="" placeholder="" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="detail_sapaan">Penanggung Jawab
+                        <span class="text-secondary" style="font-size: 12px">/Perorangan (sapaan/<i>salutation</i>, gelar)</span>
+                    </label>
+                    <input type="text" name="detail_sapaan"
+                    class="form-control" id="detail_sapaan"
+                    value="" placeholder="" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="detail_alamat">Alamat</label>
+                    <input type="text" name="detail_alamat"
+                    class="form-control" id="detail_alamat"
+                    value="" placeholder="" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="detail_email">Email</label>
+                    <input type="email" name="detail_email"
+                    class="form-control" id="detail_email"
+                    value="" placeholder="" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="detail_telepon">Telepon</label>
+                    <input type="number" name="detail_telepon"
+                    class="form-control" id="detail_telepon"
+                    value="" placeholder="" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="detail_fax">Fax</label>
+                    <input type="number" name="detail_fax"
+                    class="form-control" id="detail_fax"
+                    value="" placeholder="" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+
+
+
+
 @if(auth()->user()->is_superadmin == 0)
 {{-- Create Modal --}}
 <div class="modal fade" id="modal-create">
@@ -156,13 +225,10 @@
                     @csrf
                     <input type="hidden" name="_type" value="create">
                     <div class="form-group">
-                        <label for="create_nama">Nama</label>
+                        <label for="create_nama">Klien</label>
                         <input type="text" name="create_nama"
                         class="form-control @error('create_nama') is-invalid @enderror" id="create_nama"
-                        value="{{ old('create_nama') }}" placeholder="Cth: Budi Utomo">
-                        <span class="text-secondary" style="font-size: 12px">
-                            Untuk perusahaan, isi dengan nama perusahaan (misal: PT. ABC Xyz)
-                        </span>
+                        value="{{ old('create_nama') }}" placeholder="PT. Abc Xyz">
                         @error('create_nama')
                         <span class="invalid-feedback" role="alert">
                             {{ $message }}
@@ -170,12 +236,12 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="create_sapaan">Sapaan <i>(salutation)</i></label>
+                        <label for="create_sapaan">Penanggung Jawab</label>
                         <input type="text" name="create_sapaan"
                         class="form-control @error('create_sapaan') is-invalid @enderror" id="create_sapaan"
-                        value="{{ old('create_sapaan') }}" placeholder="Cth: Bapak">
+                        value="{{ old('create_sapaan') }}" placeholder="Kepala IT">
                         <span class="text-secondary" style="font-size: 12px">
-                            Untuk perusahaan, isi dengan penanggung jawab (misal: Kepala IT, Pimpinan, dll)
+                            Untuk perorangan, isi dengan sapaan <i>(salutation)</i> (misal: Bapak, YTH, dll)
                         </span>
                         @error('create_sapaan')
                         <span class="invalid-feedback" role="alert">
@@ -187,7 +253,7 @@
                         <label for="create_alamat">Alamat</label>
                         <input type="text" name="create_alamat"
                         class="form-control @error('create_alamat') is-invalid @enderror" id="create_alamat"
-                        value="{{ old('create_alamat') }}" placeholder="Cth: Jl. Soekarno-Hatta No. 02, Pekanbaru, Riau">
+                        value="{{ old('create_alamat') }}" placeholder="Jl. Soekarno-Hatta No. 02, Pekanbaru, Riau">
                         @error('create_alamat')
                         <span class="invalid-feedback" role="alert">
                             {{ $message }}
@@ -198,7 +264,7 @@
                         <label for="create_email">Email</label>
                         <input type="email" name="create_email"
                         class="form-control @error('create_email') is-invalid @enderror" id="create_email"
-                        value="{{ old('create_email') }}" placeholder="budi@utomo.com">
+                        value="{{ old('create_email') }}" placeholder="it@abc.xyz">
                         @error('create_email')
                         <span class="invalid-feedback" role="alert">
                             {{ $message }}
@@ -259,13 +325,10 @@
                     <input type="hidden" name="_type" value="edit">
                     <input type="hidden" name="_edit_id" value="">
                     <div class="form-group">
-                        <label for="edit_nama">Nama</label>
+                        <label for="edit_nama">Klien</label>
                         <input type="text" name="edit_nama"
                         class="form-control @error('edit_nama') is-invalid @enderror" id="edit_nama"
-                        value="{{ old('edit_nama') }}" placeholder="Cth: Budi Utomo">
-                        <span class="text-secondary" style="font-size: 12px">
-                            Untuk perusahaan, isi dengan nama perusahaan (misal: PT. ABC Xyz)
-                        </span>
+                        value="{{ old('edit_nama') }}" placeholder="Budi Utomo">
                         @error('edit_nama')
                         <span class="invalid-feedback" role="alert">
                             {{ $message }}
@@ -273,12 +336,12 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="edit_sapaan">Sapaan <i>(salutation)</label>
+                        <label for="edit_sapaan">Penanggung Jawab</label>
                         <input type="text" name="edit_sapaan"
                         class="form-control @error('edit_sapaan') is-invalid @enderror" id="edit_sapaan"
-                        value="{{ old('edit_sapaan') }}" placeholder="Cth: Bapak">
+                        value="{{ old('edit_sapaan') }}" placeholder="Bapak">
                         <span class="text-secondary" style="font-size: 12px">
-                            Untuk perusahaan, isi dengan penanggung jawab (misal: Kepala IT, Pimpinan, dll)
+                            Untuk perorangan, isi dengan sapaan <i>(salutation)</i> (misal: Bapak, YTH, dll)
                         </span>
                         @error('edit_sapaan')
                         <span class="invalid-feedback" role="alert">
@@ -290,7 +353,7 @@
                         <label for="edit_alamat">Alamat</label>
                         <input type="text" name="edit_alamat"
                         class="form-control @error('edit_alamat') is-invalid @enderror" id="edit_alamat"
-                        value="{{ old('edit_alamat') }}" placeholder="Cth: Jl. Soekarno-Hatta No. 02, Pekanbaru, Riau">
+                        value="{{ old('edit_alamat') }}" placeholder="Jl. Soekarno-Hatta No. 02, Pekanbaru, Riau">
                         @error('edit_alamat')
                         <span class="invalid-feedback" role="alert">
                             {{ $message }}
@@ -391,7 +454,7 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 @endsection
 @section('custom-js')
-
+    @if(auth()->user()->is_superadmin == 1)
     $('document').ready(function(){
         $("#client-status").on('change', function(){
             let status = $(this).val();
@@ -408,6 +471,7 @@
             $('#btn-excel-export').attr('href', '{{ route('clients.excel') }}' + '/?status=' + val);
         }
     }
+    @endif
     
     @if(auth()->user()->is_superadmin == 0)
         @if($errors->any())
@@ -452,6 +516,36 @@
 
     });
     });
+
+
+    //triggered when modal is about to be shown
+    $('#modal-detail').on('show.bs.modal', function(e) {
+
+        //get data-id attribute of the clicked element
+        var id      = $(e.relatedTarget).data('id');
+        var nama    = $(e.relatedTarget).data('nama');
+        var sapaan = $(e.relatedTarget).data('sapaan');
+        var alamat  = $(e.relatedTarget).data('alamat');
+        var email   = $(e.relatedTarget).data('email');
+        var telepon = $(e.relatedTarget).data('telepon');
+        var fax     = $(e.relatedTarget).data('fax');
+
+        //populate the textbox
+        $('#detail_nama').attr('placeholder', nama);
+        $('#detail_nama').attr('value', nama);
+        $('#detail_sapaan').attr('placeholder', sapaan);
+        $('#detail_sapaan').attr('value', sapaan);
+        $('#detail_alamat').attr('placeholder', alamat);
+        $('#detail_alamat').attr('value', alamat);
+        $('#detail_email').attr('placeholder', email);
+        $('#detail_email').attr('value', email);
+        $('#detail_telepon').attr('placeholder', telepon);
+        $('#detail_telepon').attr('value', telepon);
+        $('#detail_fax').attr('placeholder', fax);
+        $('#detail_fax').attr('value', fax);
+
+    });
+
 
 
     @if(auth()->user()->is_superadmin == 0)

@@ -100,7 +100,7 @@
                                                 <td>{{ $invoice->service->nama }} &mdash; {{ formatPrice($invoice->service->harga) }}</td>
                                                 <td>{{ idnDate(formatDate($invoice->tanggal_mulai)) }} &mdash; {{ idnDate(formatDate($invoice->tanggal_selesai)) }}</td>
 
-                                                <td>{{ formatPrice(getTotal($invoice->total_harga)) }}</td>
+                                                <td>Rp. {{ formatPrice(getTotal($invoice->total_harga)) }}</td>
                                             </tr>
                                         @endforeach
 

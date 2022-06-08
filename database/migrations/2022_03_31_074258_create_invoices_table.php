@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('jatuh_tempo');
             $table->string('masa_aktif');
             $table->decimal('total_harga', 20, 2);
+            $table->tinyInteger('terkirim')->default(0);
             $table->bigInteger('user')->unsigned();
             $table->foreign('user')->references('id')->on('users')->onDelete('restrict');
             $table->bigInteger('klien')->unsigned();

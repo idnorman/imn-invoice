@@ -70,11 +70,11 @@
                                                         data-target="#modal-default" data-id="{{ $invoice->id }}">Hapus</a>
                                                 </td>
                                                 <td><a href="{{ route('invoices.preview', $invoice->id) }}"
-                                                        class="btn btn-sm btn-info" target="_blank">Preview</a>
+                                                        class="btn btn-sm btn-info" target="_blank">Pratinjau</a>
                                                     <a href="{{ route('invoices.download', $invoice->id) }}"
                                                         class="btn btn-sm btn-success" target="_blank">Unduh</a>
                                                     <a href="{{ route('invoices.email', $invoice->id) }}"
-                                                        class="btn btn-sm btn-primary" target="_blank">Kirim</a></td>
+                                                        class="btn btn-sm btn-primary {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }} {{ ($invoice->_user->tanda_tangan) ? '' : 'disabled' }} {{ ($invoice->terkirim == 1) ? 'disabled' : '' }}">Kirim</a></td>
                                             </tr>
                                         @endforeach
 

@@ -56,7 +56,7 @@ class ClientController extends Controller
 
         $messages = [
             'create_nama.required'      => 'Nama tidak boleh kosong',
-            'create_sapaan.required'   => 'Gelar/sapaan tidak boleh kosong', 
+            'create_sapaan.required'   => 'Penanggung jawab tidak boleh kosong', 
             'create_email.email'        => 'Email tidak valid',
         ];
 
@@ -93,7 +93,7 @@ class ClientController extends Controller
 
         $messages = [
             'edit_nama.required'    => 'Nama tidak boleh kosong',
-            'edit_sapaan.required' => 'Gelar/sapaan tidak boleh kosong', 
+            'edit_sapaan.required' => 'Penanggung jawab tidak boleh kosong', 
             'edit_email.email'      => 'Email tidak valid',
         ];
 

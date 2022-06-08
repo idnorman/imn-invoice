@@ -26,7 +26,7 @@ class TransactionExport implements FromView, WithColumnWidths
     {
     	$request = $this->request;
         
-        $invoices = Invoice::with(['client', 'service'])->get();
+        $invoices = Invoice::with(['client', 'service'])->orderBy('tanggal_invoice', 'desc')->get();
 
         $klien = null;
         $layanan = null;
@@ -49,6 +49,7 @@ class TransactionExport implements FromView, WithColumnWidths
                                 $query->where('id', $layanan);
                             }
                         )
+                        ->orderBy('tanggal_invoice', 'desc')
                         ->get();
 
             if($invoices->isEmpty()){
@@ -64,12 +65,13 @@ class TransactionExport implements FromView, WithColumnWidths
         if($request->klien != null && $request->layanan == null){
             $klien = $request->klien;
 
-            $invoices = Client::with('invoice', 'invoice.client', 'invoice.service')
+            $invoices = Client::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.client', 'invoice.service'])
                         ->where('id', $klien)
                         ->get()
                         ->pluck('invoice')
                         ->flatten();
-
 
             if($invoices->isEmpty()){
                 $klien = null;
@@ -82,7 +84,9 @@ class TransactionExport implements FromView, WithColumnWidths
 
             $layanan = $request->layanan;
 
-            $invoices = Service::with('invoice', 'invoice.service', 'invoice.client')
+            $invoices = Service::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.service', 'invoice.client'])
                         ->where('id', $layanan)
                         ->get()
                         ->pluck('invoice')

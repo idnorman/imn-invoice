@@ -50,9 +50,10 @@ class TransactionController extends Controller
         if($request->klien != null && $request->layanan == null){
             $klien = $request->klien;
 
-            $invoices = Client::with('invoice', 'invoice.client', 'invoice.service')
+            $invoices = Client::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.client', 'invoice.service'])
                         ->where('id', $klien)
-                        ->orderBy('tanggal_invoice', 'desc')
                         ->get()
                         ->pluck('invoice')
                         ->flatten();
@@ -62,9 +63,10 @@ class TransactionController extends Controller
 
             $layanan = $request->layanan;
 
-            $invoices = Service::with('invoice', 'invoice.service', 'invoice.client')
+            $invoices = Service::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.service', 'invoice.client'])
                         ->where('id', $layanan)
-                        ->orderBy('tanggal_invoice', 'desc')
                         ->get()
                         ->pluck('invoice')
                         ->flatten();
@@ -114,9 +116,10 @@ class TransactionController extends Controller
         if($request->klien != null && $request->layanan == null){
             $klien = $request->klien;
 
-            $invoices = Client::with('invoice', 'invoice.client', 'invoice.service')
+            $invoices = Client::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.client', 'invoice.service'])
                         ->where('id', $klien)
-                        ->orderBy('tanggal_invoice', 'desc')
                         ->get()
                         ->pluck('invoice')
                         ->flatten();
@@ -133,9 +136,10 @@ class TransactionController extends Controller
 
             $layanan = $request->layanan;
 
-            $invoices = Service::with('invoice', 'invoice.service', 'invoice.client')
+            $invoices = Service::with(['invoice' => function($q){
+                            $q->orderBy('tanggal_invoice', 'desc');
+                        }, 'invoice.service', 'invoice.client'])
                         ->where('id', $layanan)
-                        ->orderBy('tanggal_invoice', 'desc')
                         ->get()
                         ->pluck('invoice')
                         ->flatten();

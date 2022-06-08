@@ -76,6 +76,10 @@ class DashboardController extends Controller
     }
 
     public function diff($x1, $x2) {
+
+        if(!$x1){
+            $x1 = 1;
+        }
         $diff = ($x2 - $x1) / $x1;
         return round($diff * 100, 2);
     }

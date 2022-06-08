@@ -22,7 +22,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['client', 'service'])->orderBy('id', 'desc')->get();
+        $invoices = Invoice::with(['client', 'service', '_user'])->orderBy('id', 'desc')->get();
         return view('pages.invoice.index', compact('invoices'));
     }
 
@@ -208,7 +208,7 @@ class InvoiceController extends Controller
 
         $filename = $invoice->client->nama . '_' . $invoice->service->nama . '.pdf';
 
-        $pdf = PDF::loadView('pages.invoice.template', compact('invoice'));
+        $pdf = PDF::loadView('pages.invoice.templateWithSign', compact('invoice'));
         $pdf->setPaper('a4', 'portrait');
 
         return $pdf->stream($filename);
@@ -238,6 +238,10 @@ class InvoiceController extends Controller
                     ->subject('Tagihan ' . $invoice->service->nama)
                     ->attachData($pdf->output(), $user->nama . '-' . $invoice->service->nama . '.pdf');
         });
+
+        $invoice->update([
+            'terkirim' => 1    
+        ]);
 
         return redirect()->route('invoices.index')->with('success', 'Invoice berhasil dikirim');
 

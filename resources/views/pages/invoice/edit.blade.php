@@ -267,7 +267,7 @@
             // let user  = '{{ auth()->user()->inisial }}';
             // let type  = 'INV-IMN';
             // let text  = 'XX/INV-IMN/'+user+'/'+month+'/'+year;
-            let text = '{{ (old('nomor_invoice')) ? old('nomor_invoice') : $invoice->nomor_invoice }}'
+            let text = '{{ (old('nomor_invoice')) ? old('nomor_invoice') : $invoice->nomor_invoice }}';
 
             $('#nomorInvoice').val(text);
         },
@@ -287,7 +287,7 @@
                 @endphp
             @endif
 
-            let reff = {{ $arr[0] }};
+            let reff = '{{ $arr[0] }}';
             let text  = reff+'/INV-IMN/'+user+'/'+month+'/'+year;
             $('#nomorInvoice').val(text);
         }

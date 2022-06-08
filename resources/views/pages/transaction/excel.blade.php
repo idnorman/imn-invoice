@@ -54,7 +54,7 @@
 		<table class="tg">
 			<thead>
 				<tr>
-					<th class="tg-baqh fs-16 ta-center va-middle" colspan="5">PT. Instanet Media Nusantara</th>
+					<th class="tg-baqh fs-16 ta-center va-middle" colspan="5" align="center" valign="middle">PT. Instanet Media Nusantara</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -63,18 +63,16 @@
 				</tr>
 				@if($klien != null)
 				<tr>
-					<td class="bold no-border arial fs-14">Klien </td>
-					<td class="bold no-border arial fs-14" colspan="4">: {{ $klien }}</td>
+					<td class="{{ ($layanan == null) ? 'pb-2' : '' }} bold no-border arial fs-14" colspan="5">Klien: {{ $klien }} </td>
 				</tr>
 				@endif
 				@if($layanan != null)
 				<tr>
-					<td class="pb-2 bold no-border arial fs-14">Layanan </td>
-					<td class="pb-2 bold no-border arial fs-14" colspan="4">: {{ $layanan }}</td>
+					<td class="pb-2 bold no-border arial fs-14" colspan="5">Layanan : {{ $layanan }}</td>
 				</tr>
 				@endif
 				<tr>
-					<th class="border bold ta-center va-middle" width="3%">No</th>
+					<th class="border bold ta-center va-middle" width="3%" align="center">No</th>
 					<th class="border va-middle">Klien</th>
 					<th class="border va-middle" width="25%">Layanan &mdash; Harga/Bulan</th>
 					<th class="border va-middle" width="25%">Periode Layanan</th>
@@ -83,7 +81,7 @@
 				
 				@forelse($invoices as $invoice)
 				<tr>
-					<td class="border ta-center va-middle">{{ $loop->iteration }}</td>
+					<td class="border ta-center va-middle" align="center">{{ $loop->iteration }}</td>
 					<td class="border va-middle">{{ $invoice->client->nama }}</td>
 					<td class="border va-middle">{{ $invoice->service->nama }} &mdash; Rp. {{ formatPrice($invoice->service->harga) }}</td>
 					<td class="border va-middle">{{ idnDate(formatDate($invoice->tanggal_mulai)) }} &mdash; {{ idnDate(formatDate($invoice->tanggal_selesai)) }}</td>
@@ -91,7 +89,7 @@
 				</tr>
 				@empty
 				<tr>
-					<td class="border ta-center va-middle" colspan="5">Data Kosong</td>
+					<td class="border ta-center va-middle" colspan="5" align="center" valign="middle">Data Kosong</td>
 				</tr>
 				@endforelse
 					
