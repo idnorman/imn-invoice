@@ -12,6 +12,10 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\InvoiceController;
 
 
+Route::get('/tess', function(){
+    return view('pages.transaction.template.mailTagihan');
+});
+
 Route::get('', function(){
     return redirect()->route('login');
 });
@@ -126,10 +130,27 @@ Route::group([
 
 Route::group([
     'prefix' => 'transaksi',
-    'middleware' => ['auth', 'superadmin']
+    'middleware' => ['auth']
 ], function(){
     Route::get('', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('detail/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::delete('hapus', [TransactionController::class, 'destroy'])->name('transactions.delete');
 
+    Route::post('buat-invoice', [TransactionController::class, 'createInvoice'])->name('transactions.create-invoice');
+    Route::get('lunas/{id}', [TransactionController::class, 'paidOff'])->name('transactions.paidOff');
+
+    Route::get('pratinjau/{id}', [TransactionController::class, 'preview'])->name('transactions.preview');
+    Route::get('unduh/{id}', [TransactionController::class, 'download'])->name('transactions.download');
+    Route::get('pratinjau-ttd/{id}', [TransactionController::class, 'previewSign'])->name('transactions.previewSign');
+    Route::get('unduh-ttd/{id}', [TransactionController::class, 'downloadSign'])->name('transactions.downloadSign');
+    Route::get('pratinjau-lunas/{id}', [TransactionController::class, 'previewProof'])->name('transactions.previewProof');
+    Route::get('unduh-lunas/{id}', [TransactionController::class, 'downloadProof'])->name('transactions.downloadProof');
+    Route::get('unduh-lunas-ttd/{id}', [TransactionController::class, 'downloadProofSign'])->name('transactions.downloadProofSign');
+    Route::get('kirim-invoice/{id}', [TransactionController::class, 'sendInvoice'])->name('transactions.sendInvoice');
+    Route::get('kirim-bukti/{id}', [TransactionController::class, 'sendProof'])->name('transactions.sendProof');
+
+    Route::get('get-services/{id}',[TransactionController::class, 'getServices'])->name('transactions.get_services');
+    Route::post('simpan', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('pdf/', [TransactionController::class, 'pdf'])->name('transactions.pdf');
     Route::get('excel/', [TransactionController::class, 'excel'])->name('transactions.excel');
 });

@@ -10,6 +10,9 @@ use App\Models\Client;
 use App\Models\ServiceCategory;
 use App\Models\Service;
 
+use App\Models\Tagihan;
+use App\Models\Transaction;
+
 use Carbon\Carbon; 
 use DB;
 
@@ -17,62 +20,90 @@ class DashboardController extends Controller
 {
     public function index(){
 
-        $now = Carbon::now();
-        $date = Carbon::parse($now)->toDateString();
+        $date = Carbon::now();;
+
+        $active_client = Client::whereHas('transaction', function($q) use ($date){
+            $q->whereHas('tagihan', function($q2) use ($date){
+                $q2->where('is_paid', 1)->whereDate('end_date', '>=', $date);
+            });
+        })->count();
 
         $total = [
             'client'        => Client::count(),
             'service'       => Service::count(),
-            'invoice'       => Invoice::count(),
-            'active_client' => Client::select('clients.id')->join('invoices', 'clients.id', 'invoices.klien')->whereDate('invoices.tanggal_selesai', '>', $date)->groupBy('clients.id')->get()->count()
+            'transaction'   => Transaction::count(),
+            'active_client' => $active_client
         ];
 
         $currMonth = Carbon::now()->month;
         $lastMonth = Carbon::now()->subMonth()->month;
 
-        // $currMonthData = Service::whereHas('invoice', function($q) use ($currMonth){
-        //                         $q->whereMonth('tanggal_invoice', $currMonth);
-        //                     })->withCount([
-        //                         'invoice' => function($q) use ($currMonth){
-        //                             $q->whereMonth('tanggal_invoice', $currMonth)->select(DB::raw("SUM(total_harga) as harga_final"));
-        //                         }
-        //                     ])->get();
+        $currMonthData = Service::join('transactions', 'transactions.service_id', 'services.id')
+                        ->join('tagihans', 'tagihans.transaction_id', 'transactions.id')
+                        ->select(
+                            'services.id as service_id',
+                            'services.nama as service_nama',
+                            'transactions.id as transaction_id',
+                            'tagihans.id as tagihan_id',
+                            DB::raw("SUM(tagihans.total_harga) as harga_final")
+                        )
+                        ->whereMonth('tagihans.invoice_date', $currMonth)
+                        ->groupBy('services.id', 'services.nama', 'transactions.id', 'tagihans.id')
+                        ->get()
+                        ->groupBy('service_id');
 
-        // $lastMonthData = Service::whereHas('invoice', function($q) use ($lastMonth){
-        //                         $q->whereMonth('tanggal_invoice', $lastMonth);
-        //                     })->withCount([
-        //                         'invoice' => function($q) use ($lastMonth){
-        //                             $q->whereMonth('tanggal_invoice', $lastMonth)->select(DB::raw("SUM(total_harga) as harga_final"));
-        //                         }
-        //                     ])->get();
+        $lastMonthData = Service::join('transactions', 'transactions.service_id', 'services.id')
+                        ->join('tagihans', 'tagihans.transaction_id', 'transactions.id')
+                        ->select(
+                            'services.id as service_id',
+                            'services.nama as service_nama',
+                            'transactions.id as transaction_id',
+                            'tagihans.id as tagihan_id',
+                            DB::raw("SUM(tagihans.total_harga) as harga_final")
+                        )
+                        ->whereMonth('tagihans.invoice_date', $lastMonth)
+                        ->groupBy('services.id', 'services.nama', 'transactions.id', 'tagihans.id')
+                        ->get()
+                        ->groupBy('service_id');
 
-        $currMonthData = Service::whereHas('invoice')->withCount([
-                                'invoice' => function($q) use ($currMonth){
-                                    $q->whereMonth('tanggal_invoice', $currMonth)->select(DB::raw("SUM(total_harga) as harga_final"));
-                                }
-                            ])->with(['invoice' => function ($q) use ($currMonth){
-                                $q->whereMonth('tanggal_invoice', $currMonth);
-                            }])->get();
+        
+        $currMonthValue = $currMonthData->mapWithKeys(function ($group, $key) {
+            return [$key => $group->sum('harga_final')];
+        });
+        $lastMonthValue = $lastMonthData->mapWithKeys(function ($group, $key) {
+            return [$key => $group->sum('harga_final')];
+        });
 
-        $lastMonthData = Service::whereHas('invoice')->withCount([
-                                'invoice' => function($q) use ($lastMonth){
-                                    $q->whereMonth('tanggal_invoice', $lastMonth)->select(DB::raw("SUM(total_harga) as harga_final"));
-                                }
-                            ])->with(['invoice' => function ($q) use ($lastMonth){
-                                $q->whereMonth('tanggal_invoice', $lastMonth);
-                            }])->get();
+        $key = array_merge(array_keys($lastMonthValue->toArray()),array_keys($currMonthValue->toArray()));
 
+        $currMonthServices = Service::whereIn('id', array_keys($currMonthValue->toArray()))->get()->groupBy('id');
+        $lastMonthServices = Service::whereIn('id', array_keys($lastMonthValue->toArray()))->get()->groupBy('id');
 
-        $currMonthTotal = getTotal(Invoice::with('service')->whereMonth('tanggal_invoice', $currMonth)->sum('total_harga'));
-        $lastMonthTotal = getTotal(Invoice::with('service')->whereMonth('tanggal_invoice', $lastMonth)->sum('total_harga'));
+        $services = Service::whereIn('id', $key)->get()->groupBy('id');
 
-// dd(getTotal($lastMonthTotal));
+        $finalTotal = [];
+        $temp = [];
+        $i = 0;
+        foreach($services as $service){
+            $temp = [
+                'service_id' => $service[0]->id,
+                'service_name' => $service[0]->nama,
+                'curr_month_value' => isset($currMonthValue[$service[0]->id]) ? $currMonthValue[$service[0]->id] : 0,
+                'last_month_value' => isset($lastMonthValue[$service[0]->id]) ? $lastMonthValue[$service[0]->id] : 0,
+            ];
+            $finalTotal[$i] = $temp;
+            $i++;
+        }
+        // dd($finalTotal);
+        $currMonthTotal = getTotal(Tagihan::with('transaction.service')->whereMonth('invoice_date', $currMonth)->sum('total_harga'));
+        $lastMonthTotal = getTotal(Tagihan::with('transaction.service')->whereMonth('invoice_date', $lastMonth)->sum('total_harga'));
 
         $diff = $this->diff($lastMonthTotal, $currMonthTotal);
 
-        $lastweek = Invoice::with('_user', 'client','service')->where('tanggal_invoice', '>=', Carbon::today()->subDays(7)->format('Y-m-d'))->orderBy('tanggal_invoice', 'desc')->get()->groupBy('tanggal_invoice', 'id', 'nomor_invoice', 'tanggal_mulai', 'tanggal_selesai', 'jatuh_tempo', 'masa_aktif', 'total_harga', 'user', 'klien', 'layanan', 'created_at', 'updated_at');
-        // dd($last7days);
-        return view('pages.dashboard.index', compact('total', 'currMonthData', 'lastMonthData', 'currMonthTotal', 'lastMonthTotal', 'diff', 'lastweek'));
+        // $lastweek = Invoice::with('_user', 'client','service')->where('tanggal_invoice', '>=', Carbon::today()->subDays(7)->format('Y-m-d'))->orderBy('tanggal_invoice', 'desc')->get()->groupBy('tanggal_invoice', 'id', 'nomor_invoice', 'tanggal_mulai', 'tanggal_selesai', 'jatuh_tempo', 'masa_aktif', 'total_harga', 'user', 'klien', 'layanan', 'created_at', 'updated_at');
+        $lastweek = Tagihan::with('transaction.client', 'transaction.service', 'user')->where('invoice_date', '>=', Carbon::today()->subDays(7)->format('Y-m-d'))->orderBy('invoice_date', 'desc')->get();
+        // dd($lastweek);
+        return view('pages.dashboard.index', compact('total', 'currMonthTotal', 'lastMonthTotal', 'diff', 'finalTotal'));
     }
 
     public function diff($x1, $x2) {

@@ -15,4 +15,8 @@ class Client extends Model
     public function invoice(){
         return $this->hasMany(Invoice::class, 'klien');
     }
+
+    public function transaction(){
+        return $this->hasMany(Transaction::class);
+    }
 }

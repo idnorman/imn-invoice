@@ -157,15 +157,13 @@ body {
     </style>
   </head>
   <body>
-    <div class="box">
-      <div class="ribbon ribbon-top-right"><span>Tagihan</span></div>
-    </div>
-    <!-- <div class="container"> -->
-      <div class="row justify-content-center" style="margin-top: -100px;">
+   
+    <div class="container">
+      <div class="row justify-content-center">
         <table class="col-12" style="width: 100%;">
           <thead>
             <tr>
-              <td colspan="3"><span class="font-weight-bold">PT. Instanet Media Nusantara</span></td>
+              <td colspan="3" style="padding-top: 25px"><span class="font-weight-bold">PT. Instanet Media Nusantara</span></td>
               <td colspan="2" rowspan="2" class="h-align-center v-align-center"><img class="mt-3 pt-4 pr-10" src="{{ public_path('_images/logo.png') }}" width="200"></td>
             </tr>
             <tr>
@@ -183,27 +181,27 @@ body {
           <tbody>
             <tr>
               <td colspan="3" class="border-bottom-3"><span class="invoice-text ml-2">INVOICE</span></td>
-              <td colspan="2" class="border-bottom-3"><span class="font-weight-bold mr-5 pl-3">No. </span><span class="font-weight-bold ml-5" style="font-size: 14px;">{{ $invoice->nomor_invoice }}</span></td>
+              <td colspan="2" class="border-bottom-3"><span class="font-weight-bold mr-5 pl-3">No. </span><span class="font-weight-bold ml-5" style="font-size: 14px;">{{ $reff }}</span></td>
             </tr>
             <tr>
               <td rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-1">Kepada</td>
-              <td colspan="2" rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-3">{{ $invoice->client->sapaan }} {{ $invoice->client->nama }}</td>
+              <td colspan="2" rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-3">{{ $invoice->transaction->client->sapaan }} {{ $invoice->transaction->client->nama }}</td>
               <td class="font-weight-bold pl-3" style="border-right-style: none;">Tanggal Invoice</td>
-              <td>{{ idnDate(formatDate($invoice->tanggal_invoice)) }}</td>
+              <td>{{ idnDate(formatDate($invoice->invoice_date)) }}</td>
             </tr>
             <tr>
               <td class="font-weight-bold pl-3">Tanggal Jatuh Tempo</td>
-              <td>{{ idnDate(formatDate($invoice->jatuh_tempo)) }}</td>
+              <td>{{ idnDate(formatDate($jatuhTempo)) }}</td>
             </tr>
             <tr>
               <td class="border-bottom-3 font-weight-bold pl-3">Periode Pemakaian</td>
-              <td class="border-bottom-3">{{ idnDate(formatDate($invoice->tanggal_mulai)) }} &mdash; {{ idnDate(formatDate($invoice->tanggal_selesai)) }}</td>
+              <td class="border-bottom-3">{{ idnDate(formatDate($invoice->start_date)) }} &mdash; {{ idnDate(formatDate($invoice->end_date)) }}</td>
             </tr>
             <tr>
               <td rowspan="3" class="v-align-top border-bottom-3 font-weight-bold pl-1">Alamat</td>
-              <td colspan="2" rowspan="3" class="v-align-top border-bottom-3 pl-3">{{ $invoice->client->alamat }}</td>
+              <td colspan="2" rowspan="3" class="v-align-top border-bottom-3 pl-3">{{ $invoice->transaction->client->alamat }}</td>
               <td class="border-bottom-3 font-weight-bold pl-3">Perihal</td>
-              <td class="border-bottom-3">Layanan {{ $invoice->service->nama }}</td>
+              <td class="border-bottom-3">Layanan {{ $invoice->transaction->service->nama }}</td>
             </tr>
             <tr>
               <td colspan="2" class="font-weight-bold pl-3">Pembayaran ditujukan kepada</td>
@@ -214,13 +212,13 @@ body {
             </tr>
             <tr>
               <td class="font-weight-bold pl-1">Kontak</td>
-              <td colspan="2" class="pl-3">{{ $invoice->client->telepon }}</td>
+              <td colspan="2" class="pl-3">{{ $invoice->transaction->client->telepon }}</td>
               <td class="font-weight-bold pl-3">Nama Bank</td>
               <td>Bank BCA Pekanbaru</td>
             </tr>
             <tr>
               <td class="border-bottom-3 font-weight-bold pl-1">Fax</td>
-              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->client->fax }}</td>
+              <td colspan="2" class="border-bottom-3 pl-3">{{ $invoice->transaction->client->fax }}</td>
               <td class="border-bottom-3 font-weight-bold pl-3">No. Rekening</td>
               <td class="border-bottom-3">034-3249621</td>
             </tr>
@@ -233,14 +231,14 @@ body {
             </tr>
             <tr>
               <td class="v-align-center h-align-center pt-3 font-weight-bold">1</td>
-              <td class="pt-3 font-weight-bold pl-3">{{ $invoice->service->service_category->nama}}</td>
+              <td class="pt-3 font-weight-bold pl-3">{{ $invoice->transaction->service->service_category->nama}}</td>
               <td></td>
               <td></td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td height="50px" class="v-align-top pl-3">{{ $invoice->service->nama }}</td>
+              <td height="50px" class="v-align-top pl-3">{{ $invoice->transaction->service->nama }}</td>
               <td class="v-align-top h-align-center">1</td>
               <td class="v-align-top">
                 <div class="d-flex flex-row justify-content-between">
@@ -298,28 +296,28 @@ body {
               <td></td>
               <td></td>
               <td></td>
-              <td class="font-weight-bold fs-14 h-align-right">{{ $invoice->_user->nama }}</td>
+              <td class="font-weight-bold fs-14 h-align-right">{{ $invoice->user->nama }}</td>
             </tr>
             <tr>
               <td></td>
               <td></td>
               <td></td>
               <td></td>
-              <td class="h-align-right">{{ $invoice->_user->jabatan }}</td>
+              <td class="h-align-right">{{ $invoice->user->jabatan }}</td>
             </tr>
             <tr>
               <td></td>
               <td></td>
               <td></td>
               <td></td>
-              <td class="h-align-right">HP : {{ $invoice->_user->telepon }}</td>
+              <td class="h-align-right">HP : {{ $invoice->user->telepon }}</td>
             </tr>
             <tr>
               <td></td>
               <td></td>
               <td></td>
               <td></td>
-              <td class="h-align-right">Email : <a href="mailto:{{ $invoice->_user->email }}"><u>{{ $invoice->_user->email}}</u></a></td>
+              <td class="h-align-right">Email : <a href="mailto:{{ $invoice->user->email }}"><u>{{ $invoice->user->email}}</u></a></td>
             </tr>
             <tr>
               <td></td>
@@ -331,7 +329,7 @@ body {
           </tbody>
         </table>
       </div>
-    <!-- </div> -->
+    </div>
     <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
 

@@ -9,6 +9,8 @@ use App\Models\Client;
 use App\Models\ServiceCategory;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\Transaction;
+use App\Models\Tagihan;
 
 use Illuminate\Support\Facades\Mail;
 use PDF;
@@ -22,8 +24,8 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['client', 'service', '_user'])->orderBy('id', 'desc')->get();
-        return view('pages.invoice.index', compact('invoices'));
+        $tagihans = Tagihan::with(['transaction.client', 'transaction.service', 'transaction.user'])->orderBy('invoice_date', 'desc')->get();
+        return view('pages.invoice.index', compact('tagihans'));
     }
 
     /**
@@ -208,7 +210,7 @@ class InvoiceController extends Controller
 
         $filename = $invoice->client->nama . '_' . $invoice->service->nama . '.pdf';
 
-        $pdf = PDF::loadView('pages.invoice.templateWithSign', compact('invoice'));
+        $pdf = PDF::loadView('pages.invoice.template', compact('invoice'));
         $pdf->setPaper('a4', 'portrait');
 
         return $pdf->stream($filename);

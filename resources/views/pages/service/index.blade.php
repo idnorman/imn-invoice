@@ -39,7 +39,7 @@
                             </div>
                         @endif
                         <div class="card">
-                            @if(auth()->user()->is_superadmin == 0)
+                            @if(auth()->user()->is_superadmin == 1)
                             <div class="card-header">
                                 <a href="" class="btn btn-primary" data-toggle="modal" data-target="#modal-create">Tambah</a>
                             </div>
@@ -140,7 +140,7 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-    @if(auth()->user()->is_superadmin == 0)
+    @if(auth()->user()->is_superadmin == 1)
     {{-- Create Modal --}}
     <div class="modal fade" id="modal-create">
         <div class="modal-dialog">
@@ -351,7 +351,7 @@
         }
     }
 
-    @if(auth()->user()->is_superadmin == 0)
+    @if(auth()->user()->is_superadmin == 1)
     $(function () {
         $('.select2-create-kategori').select2();
         $('.select2-edit-kategori').select2();
@@ -437,7 +437,7 @@
     }).buttons().container().appendTo('#service-categories-table_wrapper .col-md-6:eq(0)');
     
     });
-    @if(auth()->user()->is_superadmin == 0)
+    @if(auth()->user()->is_superadmin == 1)
     //triggered when modal is about to be shown
     $('#modal-edit').on('show.bs.modal', function(e) {
 

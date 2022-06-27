@@ -82,91 +82,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
         font-weight: bold;
       }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  /*background: #f0f0f0;*/
-}
-.box {
-  position: relative;
-  width: 100%;
-  box-shadow: 0 0 15px rgba(0,0,0,.1);
-}
+      .tanda-tangan
+      {
+          display: inline-block;
+          width: 200px;
+          height: 100px;
+          position: relative;
+          background: url("{{ public_path('_images/tanda_tangan/' . $invoice->_user->tanda_tangan) }}") no-repeat;
+          background-size: 200px auto;
 
-/* common */
-.ribbon {
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  position: absolute;
-}
-.ribbon::before,
-.ribbon::after {
-  position: absolute;
-  z-index: -1;
-  content: '';
-  display: block;
-  border: 5px solid #2980b9;
-}
-.ribbon span {
-  position: absolute;
-  display: block;
-  width: 225px;
-  padding: 15px 0;
-  background-color: #3498db;
-  box-shadow: 0 5px 10px rgba(0,0,0,.1);
-  color: #fff;
-  font: 700 18px/1 'Lato', sans-serif;
-  text-shadow: 0 1px 1px rgba(0,0,0,.2);
-  text-transform: uppercase;
-  text-align: center;
-}
-/* top right*/
-.ribbon-top-right {
-  top: -10px;
-  right: -10px;
-}
-.ribbon-top-right::before,
-.ribbon-top-right::after {
-  border-top-color: transparent;
-  border-right-color: transparent;
-}
-.ribbon-top-right::before {
-  top: 0;
-  left: 0;
-}
-.ribbon-top-right::after {
-  bottom: 0;
-  right: 0;
-}
-.ribbon-top-right span {
-  left: -25px;
-  top: 30px;
-  transform: rotate(45deg);
-}
-.pr-10{
-  padding-right: 100px;
-}
-.pt-4{
-  padding-top: 40px;
-}
-
+      }
+      .tanda-tangan:after
+      {
+          content: '';
+          display: inline-block;
+          position: absolute;
+          width: 200px;
+          height: 100px;
+          background: url("{{ public_path('_images/cap.png') }}") no-repeat;
+          background-size: 200px auto;
+      }
 
     </style>
   </head>
   <body>
-    <div class="box">
-      <div class="ribbon ribbon-top-right"><span>Tagihan</span></div>
-    </div>
     <!-- <div class="container"> -->
-      <div class="row justify-content-center" style="margin-top: -100px;">
-        <table class="col-12" style="width: 100%;">
+      <div class="row justify-content-center">
+        <table class="col-12" style="width:100%;">
           <thead>
             <tr>
               <td colspan="3"><span class="font-weight-bold">PT. Instanet Media Nusantara</span></td>
-              <td colspan="2" rowspan="2" class="h-align-center v-align-center"><img class="mt-3 pt-4 pr-10" src="{{ public_path('_images/logo.png') }}" width="200"></td>
+              <td colspan="2" rowspan="2" class="h-align-center v-align-center pl-3"><img class="mt-3 pt-3" src="{{ public_path('_images/logo.png') }}" width="200"></td>
             </tr>
             <tr>
               <td colspan="3">
@@ -188,7 +134,7 @@ body {
             <tr>
               <td rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-1">Kepada</td>
               <td colspan="2" rowspan="3" class="v-align-top font-weight-bold border-bottom-3 pl-3">{{ $invoice->client->sapaan }} {{ $invoice->client->nama }}</td>
-              <td class="font-weight-bold pl-3" style="border-right-style: none;">Tanggal Invoice</td>
+              <td class="font-weight-bold pl-3">Tanggal Invoice</td>
               <td>{{ idnDate(formatDate($invoice->tanggal_invoice)) }}</td>
             </tr>
             <tr>
@@ -291,7 +237,10 @@ body {
               <td></td>
               <td></td>
               <td></td>
-              <td colspan="2" class="v-align-bottom" height="200px"><hr></td>
+              <td colspan="2" class="v-align-bottom h-align-right" height="200px">
+                <div class="tanda-tangan" style="padding-right: 30px;"></div>
+                <hr>
+              </td>
             </tr>
             <tr>
               <td></td>

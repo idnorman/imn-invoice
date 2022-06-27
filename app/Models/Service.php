@@ -19,4 +19,8 @@ class Service extends Model
         return $this->hasMany(Invoice::class, 'layanan');
     }
 
+    public function transaction(){
+        return $this->hasMany(Transaction::class);
+    }
+
 }

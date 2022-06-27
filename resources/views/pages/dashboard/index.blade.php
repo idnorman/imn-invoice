@@ -50,7 +50,7 @@
 										<p>Klien Aktif</p>
 									</div>
 									<div class="icon">
-										<i class="fas fa-hands-helping"></i>
+										<i class="fas fa-handshake-angle"></i>
 									</div>
 									<div class="small-box-footer">
 										<a href="{{ route('clients.index') }}/?status=aktif" class="small-box-footer text-white">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
@@ -72,28 +72,10 @@
 									</div>
 								</div>
 							</div>
-							@if(auth()->user()->is_superadmin == 0)
 							<div class="col-lg-3 col-6">
 								<div class="small-box bg-danger">
 									<div class="inner">
-										<h3>{{ $total['invoice'] }}</h3>
-										<p>Invoice</p>
-									</div>
-									<div class="icon">
-										<i class="fas fa-receipt"></i>
-									</div>
-									
-									<div class="small-box-footer">
-										<a href="{{ route('invoices.index') }}" class="small-box-footer text-white">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-									</div>
-								</div>
-							</div>
-							@endif
-							@if(auth()->user()->is_superadmin == 1)
-							<div class="col-lg-3 col-6">
-								<div class="small-box bg-danger">
-									<div class="inner">
-										<h3>{{ $total['invoice'] }}</h3>
+										<h3>{{ $total['transaction'] }}</h3>
 										<p>Transaksi</p>
 									</div>
 									<div class="icon">
@@ -105,7 +87,6 @@
 									</div>
 								</div>
 							</div>
-							@endif
 						</div>
 
 						@if(auth()->user()->is_superadmin == 1)
@@ -162,42 +143,6 @@
 						</div>
 						@endif
 						
-						<div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-								<div class="card">
-									<div class="card-header font-weight-bold">Transaksi 7 Hari yang lalu</div>
-									<div class="card-body">
-										<div class="">
-											<div class="timeline">
-												@foreach($lastweek as $lw)
-												<div class="time-label">
-													<span class="bg-primary">&nbsp;{{ formatDate($lw->first()->tanggal_invoice, 'd M Y') }}&nbsp;</span>
-												</div>
-													@foreach($lw as $d)
-														<div>
-															<i class="fas fa-receipt bg-blue"></i>
-															<div class="timeline-item">
-																<!-- <span class="time"><i class="fas fa-clock"></i> 12:05</span> -->
-																<!-- <h3 class="timeline-header"><a href="#">{{ $d->nomor_invoice }}</a> sent you an email</h3> -->
-																<div class="timeline-body">
-																	Transaksi layanan <b>{{ $d->service->nama }}</b> oleh <b>{{ $d->client->nama }}</b> senilai <b> Rp. {{ formatPrice(getTotal($d->total_harga)) }}</b>. Invoice dibuat oleh <b>{{ $d->_user->nama }}</b>
-																</div>
-																<!-- <div class="timeline-footer">
-																	<a class="btn btn-primary btn-sm">Read more</a>
-																	<a class="btn btn-danger btn-sm">Delete</a>
-																</div> -->
-															</div>
-														</div>
-													@endforeach
-												@endforeach
-												
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
 
 						<!-- /.row -->
 						</div><!-- /.container-fluid -->
@@ -220,15 +165,15 @@
 var visitorsChart = new Chart($visitorsChart, {
 data: {
 	labels: [
-		@foreach($currMonthData as $cmd)
-			{!! "'" . $cmd->nama . "'," !!}
+		@foreach($finalTotal as $ft)
+			{!! "'" . $ft['service_name'] . "'," !!}
 		@endforeach
 	],
 	datasets: [{
 		type: 'line',
 		data: [
-					@foreach($currMonthData as $cmd)
-		    			{!! "'" . getTotal($cmd->invoice_count) . "'," !!}
+					@foreach($finalTotal as $ft)
+		    			{!! "'" . getTotal($ft['curr_month_value']) . "'," !!}
 		    		@endforeach
 		    ],
 		backgroundColor: 'transparent',
@@ -239,8 +184,8 @@ data: {
 	}, {
 		type: 'line',
 		data: [
-				@foreach($lastMonthData as $lmd)
-		    			{!! "'" . getTotal($lmd->invoice_count) . "'," !!}
+				@foreach($finalTotal as $ft)
+		    			{!! "'" . getTotal($ft['last_month_value']) . "'," !!}
 		    	@endforeach
 			],
 		backgroundColor: 'tansparent',

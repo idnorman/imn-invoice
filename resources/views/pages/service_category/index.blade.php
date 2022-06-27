@@ -40,7 +40,7 @@
                         @endif
                         <div class="card">
 
-                            @if(auth()->user()->is_superadmin == 0)
+                            @if(auth()->user()->is_superadmin == 1)
                             <div class="card-header">
                                 <a href="" class="btn btn-primary" data-toggle="modal" data-target="#modal-create">Tambah</a>
                             </div>
@@ -53,7 +53,7 @@
                                             <th>No</th>
                                             <th>Nama</th>
 
-                                            @if(auth()->user()->is_superadmin == 0)
+                                            @if(auth()->user()->is_superadmin == 1)
                                             <th>Aksi</th>
                                             @endif
                                         </tr>
@@ -65,7 +65,7 @@
                                                 
                                                 <td>{{ $serviceCategory->nama }}</td>
 
-                                                @if(auth()->user()->is_superadmin == 0)
+                                                @if(auth()->user()->is_superadmin == 1)
                                                 <td>
                                                     <a href="" class="btn btn-sm btn-warning" data-toggle="modal"
                                                         data-target="#modal-edit" data-id="{{ $serviceCategory->id }}" data-nama="{{ $serviceCategory->nama }}">Ubah</a>
@@ -82,7 +82,7 @@
                                             <th>No</th>
                                             <th>Nama</th>
 
-                                            @if(auth()->user()->is_superadmin == 0)
+                                            @if(auth()->user()->is_superadmin == 1)
                                             <th>Aksi</th>
                                             @endif
                                         </tr>
@@ -101,7 +101,7 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-@if(auth()->user()->is_superadmin == 0)
+@if(auth()->user()->is_superadmin == 1)
 {{-- Create Modal --}}
 <div class="modal fade" id="modal-create">
     <div class="modal-dialog">
@@ -228,7 +228,7 @@
     <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 @endsection
 @section('custom-js')
-    @if(auth()->user()->is_superadmin == 0)
+    @if(auth()->user()->is_superadmin == 1)
     @error('create_name')
         $(window).on('load', function() {
             $('#modal-create').modal('show');
@@ -300,7 +300,7 @@
     }).buttons().container().appendTo('#service-categories-table_wrapper .col-md-6:eq(0)');
     
     });
-    @if(auth()->user()->is_superadmin == 0)
+    @if(auth()->user()->is_superadmin == 1)
     //triggered when modal is about to be shown
     $('#modal-delete').on('show.bs.modal', function(e) {
 

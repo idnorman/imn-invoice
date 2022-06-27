@@ -97,7 +97,14 @@
             </ul>
           </li>
           @endif
-
+          <li class="nav-item">
+            <a href="{{ route('transactions.index') }}" class="nav-link {{ (request()->segment(1) == 'transaksi') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file"></i>
+              <p>
+                Transaksi
+              </p>
+            </a>
+          </li>
           @if(auth()->user()->is_superadmin == 0)
           <li class="nav-item">
             <a href="{{ route('invoices.index') }}" class="nav-link {{ (request()->segment(1) == 'invoice') ? 'active' : '' }}">
@@ -108,16 +115,8 @@
             </a>
           </li>
           @endif
-          @if(auth()->user()->is_superadmin == 1)
-          <li class="nav-item">
-            <a href="{{ route('transactions.index') }}" class="nav-link {{ (request()->segment(1) == 'transaksi') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-file"></i>
-              <p>
-                Transaksi
-              </p>
-            </a>
-          </li>
-          @endif
+          
+
           <div class="border-top border-secondary my-3"></div>
           <li class="nav-item">
             <a href="{{ route('profile.edit') }}" class="nav-link {{ (request()->segment(1) == 'edit-profil') ? 'active' : '' }}">

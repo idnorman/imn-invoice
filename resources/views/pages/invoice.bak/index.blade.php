@@ -38,79 +38,56 @@
                             </div>
                         @endif
                         <div class="card">
+                            <div class="card-header">
+                                <a href="{{ route('invoices.create') }}" class="btn btn-primary">Tambah</a>
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th width="7%">No</th>
+                                            <th>No</th>
+                                            <th>Nomor Invoice</th>
                                             <th>Klien</th>
                                             <th>Layanan</th>
-                                            <th>Tanggal Mulai &mdash; Selesai</th>
-                                            <th>Pembayaran</th>
-                                            @if(auth()->user()->is_superadmin == 0)
+                                            <th>Periode Layanan</th>
                                             <th>Aksi</th>
-                                            @endif
+                                            <th>Invoice</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($tagihans as $tagihan)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $tagihan->transaction->client->nama }}</td>
-                                            <td>{{ $tagihan->transaction->service->nama }}</td>
-                                            <td>{{ formatDate($tagihan->start_date, 'd-m-Y') }} &mdash; {{ formatDate($tagihan->end_date, 'd-m-Y') }}</td>
-                                            <td>Rp. {{ formatPrice(getTotal($tagihan->total_harga))}} &mdash;
-                                                <span class="
-                                                    {{ ($tagihan->is_paid == 0) ? 'badge badge-secondary' : 'badge badge-success' }}
-                                                ">
-                                                    {{ ($tagihan->is_paid == 0) ? 'Belum dibayar' : 'Telah dibayar' }}
-                                                </span>
-                                            </td>
-                                            @if(auth()->user()->is_superadmin == 0)
-                                            <td>
-                                                <a href="{{ route('transactions.paidOff', $tagihan->id) }}" class="btn btn-sm btn-success {{ $tagihan->is_paid == 1 ? 'disabled' : '' }}">Lunas</a>
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown">
-                                                        Unduh
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item small" target="_blank" href="{{ route('transactions.download', $tagihan->id) }}">Tagihan</a>
-                                                        {{-- <a class="dropdown-item small" target="_blank" href="{{ route('transactions.preview', $tagihan->id) }}">Pratinjau Tagihan</a> --}}
-                                                        {{-- <div class="dropdown-divider"></div> --}}
-                                                        <a class="dropdown-item small" target="_blank" href="{{ route('transactions.downloadSign', $tagihan->id) }}">Tagihan (Tanda tangan)</a>
-                                                        {{-- <a class="dropdown-item small" target="_blank" href="{{ route('transactions.previewSign', $tagihan->id) }}">Pratinjau Tagihan (Tanda tangan)</a> --}}
-                                                        <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item small" target="_blank" href="{{ route('transactions.downloadProof', $tagihan->id) }}">Invoice Lunas</a>
-                                                        <a class="dropdown-item small" target="_blank" href="{{ route('transactions.downloadProofSign', $tagihan->id) }}">Invoice Lunas (Tanda tangan)</a>
-                                                        {{-- <a class="dropdown-item small" target="_blank" href="{{ route('transactions.previewProof', $tagihan->id) }}">Pratinjau Inv. Lunas</a> --}}
-                                                    </div>
-                                                </div>
-
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown">
-                                                        Kirim
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item small {{ $tagihan->is_paid == 1 ? 'disabled' : '' }} {{ $tagihan->is_sent == 1 ? 'disabled' : '' }}" href="{{ route('transactions.sendInvoice', $tagihan->id) }}">Tagihan</a>
-                                                        <a class="dropdown-item small" href="{{ route('transactions.sendProof', $tagihan->id) }}">Bukti Lunas</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            @endif
-                                        </tr>
+                                        @foreach ($invoices as $invoice)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $invoice->nomor_invoice }}</td>
+                                                <td>{{ $invoice->client->nama }}</td>
+                                                <td>{{ $invoice->service->nama }}</td>
+                                                <td>{{ formatDate($invoice->tanggal_mulai) }} &mdash; {{ formatDate($invoice->tanggal_selesai) }}</td>
+                                                <td>
+                                                    <a href="{{ route('invoices.edit', $invoice->id) }}"
+                                                        class="btn btn-sm btn-warning {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }}">Ubah</a>
+                                                    <a href="" class="btn btn-sm btn-danger  {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }}" data-toggle="modal"
+                                                        data-target="#modal-default" data-id="{{ $invoice->id }}">Hapus</a>
+                                                </td>
+                                                <td><a href="{{ route('invoices.preview', $invoice->id) }}"
+                                                        class="btn btn-sm btn-info" target="_blank">Pratinjau</a>
+                                                    <a href="{{ route('invoices.download', $invoice->id) }}"
+                                                        class="btn btn-sm btn-success" target="_blank">Unduh</a>
+                                                    <a href="{{ route('invoices.email', $invoice->id) }}"
+                                                        class="btn btn-sm btn-primary {{ ($invoice->_user->id == auth()->user()->id) ? '' : 'disabled' }} {{ ($invoice->_user->tanda_tangan) ? '' : 'disabled' }} {{ ($invoice->terkirim == 1) ? 'disabled' : '' }}">Kirim</a></td>
+                                            </tr>
                                         @endforeach
+
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>No</th>
+                                            <th>Nomor Invoice</th>
                                             <th>Klien</th>
                                             <th>Layanan</th>
-                                            <th>Tanggal Mulai &mdash; Selesai</th>
-                                            <th>Pembayaran</th>
-                                            @if(auth()->user()->is_superadmin == 0)
+                                            <th>Periode Layanan</th>
                                             <th>Aksi</th>
-                                            @endif
+                                            <th>Invoice</th>
                                         </tr>
                                     </tfoot>
                                 </table>
